@@ -30,6 +30,7 @@
 #ifdef CONFIG_ARM64
 		fit {
 			description = "Configuration to load ATF before U-Boot";
+			offset = <CONFIG_SPL_PAD_TO>;
 			#address-cells = <1>;
 			fit,fdt-list = "of-list";
 
