@@ -12,7 +12,7 @@
  * NAND requires 8K padding. SD/eMMC gets away with 512 bytes,
  * but let's use the larger padding to cover both.
  */
-#define PAD_SIZE			8192
+#define PAD_SIZE			1024
 
 static int egon_check_params(struct image_tool_params *params)
 {
