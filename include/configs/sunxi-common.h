@@ -190,6 +190,8 @@
 
 #define CONFIG_SPL_PAD_TO		32768		/* decimal for 'dd' */
 
+#define CONFIG_ARMV7_SECURE_BASE	SUNXI_SRAM_A2_BASE + 0x4000
+#define CONFIG_ARMV7_SECURE_MAX_SIZE	(16 * 1024) /* 16 KB */
 
 /* I2C */
 #if defined CONFIG_AXP152_POWER || defined CONFIG_AXP209_POWER || \

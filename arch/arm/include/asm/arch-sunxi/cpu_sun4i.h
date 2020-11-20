@@ -11,7 +11,6 @@
 #define SUNXI_SRAM_A1_BASE		0x00000000
 #define SUNXI_SRAM_A1_SIZE		(16 * 1024)	/* 16 kiB */
 
-#define SUNXI_SRAM_A2_BASE		0x00004000	/* 16 kiB */
 #define SUNXI_SRAM_A3_BASE		0x00008000	/* 13 kiB */
 #define SUNXI_SRAM_A4_BASE		0x0000b400	/* 3 kiB */
 #define SUNXI_SRAM_D_BASE		0x00010000	/* 4 kiB */

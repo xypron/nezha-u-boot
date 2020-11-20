@@ -14,6 +14,15 @@
 #include <asm/arch/cpu_sun4i.h>
 #endif
 
+#if defined(CONFIG_MACH_SUN4I)
+#define SUNXI_SRAM_A2_BASE	0x00004000
+#elif defined(CONFIG_MACH_SUN6I) || \
+      defined(CONFIG_MACH_SUN8I) || \
+      defined(CONFIG_MACH_SUN50I) || \
+      defined(CONFIG_MACH_SUN50I_H5)
+#define SUNXI_SRAM_A2_BASE	0x00040000
+#endif
+
 #define SOCID_A64	0x1689
 #define SOCID_H3	0x1680
 #define SOCID_V3S	0x1681
