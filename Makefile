@@ -961,6 +961,21 @@ INPUTS-$(CONFIG_X86) += u-boot-x86-start16.bin u-boot-x86-reset16.bin \
 	$(if $(CONFIG_SPL_X86_16BIT_INIT),spl/u-boot-spl.bin) \
 	$(if $(CONFIG_TPL_X86_16BIT_INIT),tpl/u-boot-tpl.bin)
 
+INPUTS-$(CONFIG_ARCH_SUNXI) += resume.egon
+
+MKIMAGEFLAGS_resume.egon := -T sunxi_egon
+
+resume.egon: resume.bin
+	$(call if_changed,mkimage)
+
+OBJCOPYFLAGS_resume.bin := -O binary
+
+resume.bin: resume.o
+	$(call if_changed,objcopy)
+
+resume.S: u-boot
+	@sed -En 's/(0x[[:xdigit:]]+) +psci_cpu_entry/ldr pc, =\1/p' $<.map > $@
+
 LDFLAGS_u-boot += $(LDFLAGS_FINAL)
 
 # Avoid 'Not enough room for program headers' error on binutils 2.28 onwards.
