@@ -13,6 +13,13 @@
  */
 
 /*
+ * Skip the first 16 KiB of SRAM A2, which is not usable, as only certain bytes
+ * are writable. Reserve the last 17 KiB for the resume shim and SCP firmware.
+ */
+#define CONFIG_ARMV7_SECURE_BASE	(SUNXI_SRAM_A2_BASE + 16 * 1024)
+#define CONFIG_ARMV7_SECURE_MAX_SIZE	(SUNXI_SRAM_A2_SIZE - 33 * 1024)
+
+/*
  * Include common sunxi configuration where most the settings are
  */
 #include <configs/sunxi-common.h>
