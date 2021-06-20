@@ -1,0 +1,24 @@
+choice
+	prompt "SPL Image Type"
+	default SUNXI_SPL_IMAGE_EGON
+
+config SUNXI_SPL_IMAGE_EGON
+	bool "eGON (non-secure)"
+	help
+	  Select this option to embed the SPL binary in an eGON.BT0 image,
+	  which is compatible with the non-secure boot ROM (NBROM).
+
+	  This is usually the correct option to choose.
+
+config SUNXI_SPL_IMAGE_TOC0
+	bool "TOC0 (secure)"
+	help
+	  Select this option to embed the SPL binary in a TOC0 image,
+	  which is compatible with the secure boot ROM (SBROM).
+
+endchoice
+
+config SUNXI_SPL_IMAGE_TYPE
+	string
+	default "sunxi_egon" if SUNXI_SPL_IMAGE_EGON
+	default "sunxi_toc0" if SUNXI_SPL_IMAGE_TOC0
