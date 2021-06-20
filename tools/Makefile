@@ -79,6 +79,7 @@ AES_OBJS-$(CONFIG_FIT_CIPHER) := $(addprefix lib/aes/, \
 OPENSSL_OBJS-$(CONFIG_MKIMAGE_LINK_OPENSSL) := \
 			lib/fdt-libcrypto.o \
 			mxsimage.o \
+			sunxi_toc0.o \
 
 ROCKCHIP_OBS = lib/rc4.o rkcommon.o rkimage.o rksd.o rkspi.o
 
