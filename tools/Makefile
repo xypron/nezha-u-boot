@@ -75,9 +75,10 @@ ECDSA_OBJS-$(CONFIG_FIT_SIGNATURE) := $(addprefix lib/ecdsa/, ecdsa-libcrypto.o)
 AES_OBJS-$(CONFIG_FIT_CIPHER) := $(addprefix lib/aes/, \
 					aes-encrypt.o aes-decrypt.o)
 
-# Cryptographic helpers that depend on openssl/libcrypto
-LIBCRYPTO_OBJS-$(CONFIG_FIT_SIGNATURE) := $(addprefix lib/, \
-					fdt-libcrypto.o)
+# Cryptographic helpers and image types that depend on openssl/libcrypto
+OPENSSL_OBJS-$(CONFIG_MKIMAGE_LINK_OPENSSL) := \
+			lib/fdt-libcrypto.o \
+			mxsimage.o \
 
 ROCKCHIP_OBS = lib/rc4.o rkcommon.o rkimage.o rksd.o rkspi.o
 
@@ -101,7 +102,6 @@ dumpimage-mkimage-objs := aisimage.o \
 			kwbimage.o \
 			lib/md5.o \
 			lpc32xximage.o \
-			mxsimage.o \
 			omapimage.o \
 			os_support.o \
 			pblimage.o \
@@ -121,7 +121,7 @@ dumpimage-mkimage-objs := aisimage.o \
 			zynqimage.o \
 			zynqmpimage.o \
 			zynqmpbif.o \
-			$(LIBCRYPTO_OBJS-y) \
+			$(OPENSSL_OBJS-y) \
 			$(LIBFDT_OBJS) \
 			gpimage.o \
 			gpimage-common.o \
@@ -136,12 +136,7 @@ fit_info-objs   := $(dumpimage-mkimage-objs) fit_info.o
 fit_check_sign-objs   := $(dumpimage-mkimage-objs) fit_check_sign.o
 file2include-objs := file2include.o
 
-ifneq ($(CONFIG_MX23)$(CONFIG_MX28)$(CONFIG_FIT_SIGNATURE),)
-# Add CONFIG_MXS into host CFLAGS, so we can check whether or not register
-# the mxsimage support within tools/mxsimage.c .
-HOSTCFLAGS_mxsimage.o += -DCONFIG_MXS
-endif
-
+ifneq ($(CONFIG_MKIMAGE_LINK_OPENSSL),)
 ifdef CONFIG_FIT_SIGNATURE
 # This affects include/image.h, but including the board config file
 # is tricky, so manually define this options here.
@@ -159,12 +154,9 @@ ifdef CONFIG_SYS_U_BOOT_OFFS
 HOSTCFLAGS_kwbimage.o += -DCONFIG_SYS_U_BOOT_OFFS=$(CONFIG_SYS_U_BOOT_OFFS)
 endif
 
-ifneq ($(CONFIG_ARMADA_38X),)
+# Enable image features which depend on OpenSSL.
 HOSTCFLAGS_kwbimage.o += -DCONFIG_KWB_SECURE
-endif
 
-# MXSImage needs LibSSL
-ifneq ($(CONFIG_MX23)$(CONFIG_MX28)$(CONFIG_ARMADA_38X)$(CONFIG_FIT_SIGNATURE)$(CONFIG_FIT_CIPHER),)
 HOSTCFLAGS_kwbimage.o += \
 	$(shell pkg-config --cflags libssl libcrypto 2> /dev/null || echo "")
 HOSTLDLIBS_mkimage += \
