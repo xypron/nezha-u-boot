@@ -244,12 +244,40 @@ void s_init(void)
 
 #define SUNXI_INVALID_BOOT_SOURCE	-1
 
+static struct boot_file_head *sunxi_egon_get_head(void)
+{
+	struct boot_file_head *egon_head = (void *)SPL_ADDR;
+
+	if (memcmp(egon_head, BOOT0_MAGIC, 8)) /* eGON.BT0 */
+		return NULL;
+
+	return egon_head;
+}
+
+static struct toc0_main_info *sunxi_toc0_get_info(void)
+{
+	struct toc0_main_info *toc0_info = (void *)SPL_ADDR;
+
+	if (memcmp(toc0_info->name, TOC0_MAIN_INFO_NAME, 8)) /* TOC0.GLH */
+		return NULL;
+
+	return toc0_info;
+}
+
 static int sunxi_get_boot_source(void)
 {
-	if (!is_boot0_magic(SPL_ADDR + 4)) /* eGON.BT0 */
-		return SUNXI_INVALID_BOOT_SOURCE;
+	struct boot_file_head *egon_head;
+	struct toc0_main_info *toc0_info;
 
-	return readb(SPL_ADDR + 0x28);
+	egon_head = sunxi_egon_get_head();
+	if (egon_head)
+		return readb(&egon_head->boot_media);
+	toc0_info = sunxi_toc0_get_info();
+	if (toc0_info)
+		return readb(&toc0_info->platform[0]);
+
+	/* Not a valid image, so we must have been booted via FEL. */
+	return SUNXI_INVALID_BOOT_SOURCE;
 }
 
 /* The sunxi internal brom will try to loader external bootloader
@@ -297,10 +325,18 @@ uint32_t sunxi_get_boot_device(void)
 #ifdef CONFIG_SPL_BUILD
 static u32 sunxi_get_spl_size(void)
 {
-	if (!is_boot0_magic(SPL_ADDR + 4)) /* eGON.BT0 */
-		return 0;
+	struct boot_file_head *egon_head;
+	struct toc0_main_info *toc0_info;
 
-	return readl(SPL_ADDR + 0x10);
+	egon_head = sunxi_egon_get_head();
+	if (egon_head)
+		return readl(&egon_head->length);
+	toc0_info = sunxi_toc0_get_info();
+	if (toc0_info)
+		return readl(&toc0_info->length);
+
+	/* Not a valid image, so use the default U-Boot offset. */
+	return 0;
 }
 
 /*
