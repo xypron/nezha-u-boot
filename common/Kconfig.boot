@@ -80,6 +80,7 @@ config FIT_SIGNATURE
 	select RSA_VERIFY
 	select IMAGE_SIGN_INFO
 	select FIT_FULL_CHECK
+	select MKIMAGE_LINK_OPENSSL
 	help
 	  This option enables signature verification of FIT uImages,
 	  using a hash signed and verified using RSA. If
@@ -115,6 +116,7 @@ config FIT_CIPHER
 	bool "Enable ciphering data in a FIT uImages"
 	depends on DM
 	select AES
+	select MKIMAGE_LINK_OPENSSL
 	help
 	  Enable the feature of data ciphering/unciphering in the tool mkimage
 	  and in the u-boot support of the FIT image.
