@@ -56,7 +56,7 @@ static struct mm_region sunxi_mem_map[] = {
 		/* RAM */
 		.virt = 0x40000000UL,
 		.phys = 0x40000000UL,
-		.size = 0xC0000000UL,
+		.size = CONFIG_SUNXI_DRAM_MAX_SIZE,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) |
 			 PTE_BLOCK_INNER_SHARE
 	}, {
@@ -237,10 +237,13 @@ void s_init(void)
 
 static int sunxi_get_boot_source(void)
 {
-	if (!is_boot0_magic(SPL_ADDR + 4)) /* eGON.BT0 */
-		return SUNXI_INVALID_BOOT_SOURCE;
+	if (is_egon_image((void *)SPL_ADDR))
+		return ((struct boot_file_head *)SPL_ADDR)->boot_media;
+	if (is_toc0_image((void *)SPL_ADDR))
+		return ((struct toc0_main_info *)SPL_ADDR)->platform[0];
 
-	return readb(SPL_ADDR + 0x28);
+	/* Not a valid BROM image, so we must have been booted via FEL. */
+	return SUNXI_INVALID_BOOT_SOURCE;
 }
 
 /* The sunxi internal brom will try to loader external bootloader
@@ -285,13 +288,18 @@ uint32_t sunxi_get_boot_device(void)
 	return -1;		/* Never reached */
 }
 
+#define is_toc0_magic(foo) true
+
 #ifdef CONFIG_SPL_BUILD
 static u32 sunxi_get_spl_size(void)
 {
-	if (!is_boot0_magic(SPL_ADDR + 4)) /* eGON.BT0 */
-		return 0;
+	if (is_egon_image((void *)SPL_ADDR))
+		return ((struct boot_file_head *)SPL_ADDR)->length;
+	if (is_toc0_image((void *)SPL_ADDR))
+		return ((struct toc0_main_info *)SPL_ADDR)->length;
 
-	return readl(SPL_ADDR + 0x10);
+	/* Unknown size, so fall back to the default offset. */
+	return 0;
 }
 
 /*
