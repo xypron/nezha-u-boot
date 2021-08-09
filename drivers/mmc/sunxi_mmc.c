@@ -23,9 +23,9 @@
 #include <reset.h>
 #include <asm/gpio.h>
 #include <asm/io.h>
+#if !CONFIG_IS_ENABLED(DM_MMC)
 #include <asm/arch/clock.h>
 #include <asm/arch/cpu.h>
-#if !CONFIG_IS_ENABLED(DM_MMC)
 #include <asm/arch/mmc.h>
 #endif
 #include <linux/delay.h>
@@ -36,6 +36,21 @@
 #ifndef CCM_MMC_CTRL_MODE_SEL_NEW
 #define CCM_MMC_CTRL_MODE_SEL_NEW	0
 #endif
+
+#include "../../arch/arm/include/asm/arch-sunxi/clock_sun50i_h6.h"
+
+unsigned int clock_get_pll6(void)
+{
+	uint32_t rval = readl((void *)0x2001020);
+
+	int n = ((rval & CCM_PLL6_CTRL_N_MASK) >> CCM_PLL6_CTRL_N_SHIFT) + 1;
+	int m = ((rval >> 1) & 0x1) + 1;
+	int p0 = ((rval >> 16) & 0x7) + 1;
+	/* The register defines PLL6-2X, not plain PLL6 */
+	uint32_t freq = 24000000UL * n / m / p0;
+
+	return freq;
+}
 
 struct sunxi_mmc_plat {
 	struct mmc_config cfg;
@@ -664,6 +679,7 @@ static int sunxi_mmc_probe(struct udevice *dev)
 		return ret;
 	ccu_reg = (u32 *)(uintptr_t)ofnode_get_addr(args.node);
 
+#define SUNXI_MMC0_BASE 0x4020000
 	priv->mmc_no = ((uintptr_t)priv->reg - SUNXI_MMC0_BASE) / 0x1000;
 	priv->mclkreg = (void *)ccu_reg + get_mclk_offset() + priv->mmc_no * 4;
 
