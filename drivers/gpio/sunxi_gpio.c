@@ -19,6 +19,9 @@
 #include <dm/device-internal.h>
 #include <dt-bindings/gpio/gpio.h>
 
+#include "../../arch/arm/include/asm/arch-sunxi/gpio.h"
+#include "../../arch/arm/mach-sunxi/pinmux.c"
+
 #if !CONFIG_IS_ENABLED(DM_GPIO)
 static int sunxi_gpio_output(u32 pin, u32 val)
 {
