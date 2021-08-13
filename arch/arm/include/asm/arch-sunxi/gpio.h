@@ -234,4 +234,9 @@ int axp_gpio_init(void);
 static inline int axp_gpio_init(void) { return 0; }
 #endif
 
+struct sunxi_gpio_plat {
+	struct sunxi_gpio *regs;
+	char bank_name[3];
+};
+
 #endif /* _SUNXI_GPIO_H */
