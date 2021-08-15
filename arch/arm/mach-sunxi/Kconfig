@@ -100,14 +100,6 @@ config AXP_PMIC_BUS
 	  Select this PMIC bus access helpers for Sunxi platform PRCM or other
 	  AXP family PMIC devices.
 
-config SUN8I_RSB
-	bool "Allwinner sunXi Reduced Serial Bus Driver"
-	help
-	  Say y here to enable support for Allwinner's Reduced Serial Bus
-	  (RSB) support. This controller is responsible for communicating
-	  with various RSB based devices, such as AXP223, AXP8XX PMICs,
-	  and AC100/AC200 ICs.
-
 config SUNXI_SRAM_ADDRESS
 	hex
 	default 0x10000 if MACH_SUN9I || MACH_SUN50I || MACH_SUN50I_H5
