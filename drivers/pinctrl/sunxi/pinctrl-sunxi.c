@@ -14,7 +14,61 @@ struct sunxi_pinctrl_plat {
 	struct sunxi_gpio __iomem *base;
 };
 
+static int sunxi_pinctrl_get_pins_count(struct udevice *dev)
+{
+	const struct sunxi_pinctrl_desc *desc = dev_get_priv(dev);
+
+	return desc->num_banks * SUNXI_GPIOS_PER_BANK;
+}
+
+static const char *sunxi_pinctrl_get_pin_name(struct udevice *dev,
+					      unsigned pin_selector)
+{
+	const struct sunxi_pinctrl_desc *desc = dev_get_priv(dev);
+	static char pin_name[5];
+
+	snprintf(pin_name, sizeof(pin_name), "P%c%d",
+		 pin_selector / SUNXI_GPIOS_PER_BANK + desc->first_bank + 'A',
+		 pin_selector % SUNXI_GPIOS_PER_BANK);
+
+	return pin_name;
+}
+
+static int sunxi_pinctrl_get_functions_count(struct udevice *dev)
+{
+	const struct sunxi_pinctrl_desc *desc = dev_get_priv(dev);
+
+	return desc->num_functions;
+}
+
+static const char *sunxi_pinctrl_get_function_name(struct udevice *dev,
+						   unsigned func_selector)
+{
+	const struct sunxi_pinctrl_desc *desc = dev_get_priv(dev);
+
+	return desc->functions[func_selector].name;
+}
+
+static int sunxi_pinctrl_pinmux_set(struct udevice *dev, unsigned pin_selector,
+				    unsigned func_selector)
+{
+	const struct sunxi_pinctrl_desc *desc = dev_get_priv(dev);
+	struct sunxi_pinctrl_plat *plat = dev_get_plat(dev);
+	int bank = pin_selector / SUNXI_GPIOS_PER_BANK;
+	int pin	 = pin_selector % SUNXI_GPIOS_PER_BANK;
+
+	sunxi_gpio_set_cfgbank(plat->base + bank, pin,
+			       desc->functions[func_selector].mux);
+
+	return 0;
+}
+
 static const struct pinctrl_ops sunxi_pinctrl_ops = {
+	.get_pins_count		= sunxi_pinctrl_get_pins_count,
+	.get_pin_name		= sunxi_pinctrl_get_pin_name,
+	.get_functions_count	= sunxi_pinctrl_get_functions_count,
+	.get_function_name	= sunxi_pinctrl_get_function_name,
+	.pinmux_set		= sunxi_pinctrl_pinmux_set,
 	.set_state		= pinctrl_generic_set_state,
 };
 

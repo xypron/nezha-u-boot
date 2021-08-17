@@ -2,9 +2,18 @@
 
 #include <asm/arch/gpio.h>
 
+#define FUNCTION_NAME_MAX		9
+
+struct sunxi_pinctrl_function {
+	const char	name[FUNCTION_NAME_MAX];
+	u8		mux;
+};
+
 struct sunxi_pinctrl_desc {
-	u8				first_bank;
-	u8				num_banks;
+	const struct sunxi_pinctrl_function	*functions;
+	u8					num_functions;
+	u8					first_bank;
+	u8					num_banks;
 };
 
 extern const struct sunxi_pinctrl_desc sun4i_a10_pinctrl_desc;
