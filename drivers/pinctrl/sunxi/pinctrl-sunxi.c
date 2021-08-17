@@ -57,6 +57,11 @@ static int sunxi_pinctrl_pinmux_set(struct udevice *dev, unsigned pin_selector,
 	int bank = pin_selector / SUNXI_GPIOS_PER_BANK;
 	int pin	 = pin_selector % SUNXI_GPIOS_PER_BANK;
 
+	debug("set mux: %-4s => %s (%d)\n",
+	      sunxi_pinctrl_get_pin_name(dev, pin_selector),
+	      sunxi_pinctrl_get_function_name(dev, func_selector),
+	      desc->functions[func_selector].mux);
+
 	sunxi_gpio_set_cfgbank(plat->base + bank, pin,
 			       desc->functions[func_selector].mux);
 
