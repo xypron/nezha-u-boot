@@ -8,6 +8,8 @@
 /dts-v1/;
 #include "sun5i-a13.dtsi"
 
+#include <dt-bindings/gpio/gpio.h>
+
 / {
 	model = "Ampe A76";
 	compatible = "ampe,a76", "allwinner,sun5i-a13";
@@ -25,4 +27,8 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart1_pg_pins>;
 	status = "okay";
+};
+
+&usbphy {
+	usb0_id_det-gpios = <&pio 6 2 GPIO_ACTIVE_HIGH>; /* PG2 */
 };
