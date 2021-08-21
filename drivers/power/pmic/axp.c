@@ -1,8 +1,37 @@
 // SPDX-License-Identifier: GPL-2.0+
 
+#include <axp_pmic.h>
 #include <dm.h>
+#include <dm/lists.h>
 #include <i2c.h>
 #include <power/pmic.h>
+#include <sysreset.h>
+
+#if CONFIG_IS_ENABLED(SYSRESET)
+static int axp_sysreset_request(struct udevice *dev, enum sysreset_t type)
+{
+	int ret;
+
+	if (type != SYSRESET_POWER_OFF)
+		return -EPROTONOSUPPORT;
+
+	ret = pmic_clrsetbits(dev->parent, AXP152_SHUTDOWN, 0, AXP152_POWEROFF);
+	if (ret < 0)
+		return ret;
+
+	return -EINPROGRESS;
+}
+
+static struct sysreset_ops axp_sysreset_ops = {
+	.request	= axp_sysreset_request,
+};
+
+U_BOOT_DRIVER(axp_sysreset) = {
+	.name		= "axp_sysreset",
+	.id		= UCLASS_SYSRESET,
+	.ops		= &axp_sysreset_ops,
+};
+#endif
 
 static int axp_pmic_reg_count(struct udevice *dev)
 {
@@ -23,6 +52,13 @@ static int axp_pmic_bind(struct udevice *dev)
 	ret = dm_scan_fdt_dev(dev);
 	if (ret)
 		return ret;
+
+	if (CONFIG_IS_ENABLED(SYSRESET)) {
+		ret = device_bind_driver_to_node(dev, "axp_sysreset", "axp_sysreset",
+						 dev_ofnode(dev), NULL);
+		if (ret)
+			return ret;
+	}
 
 	return 0;
 }
