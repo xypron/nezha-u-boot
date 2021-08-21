@@ -241,6 +241,7 @@ config MACH_SUN8I_A23
 	select ARCH_SUPPORT_PSCI
 	select DRAM_SUN8I_A23
 	select PHY_SUN4I_USB
+	select SUN8I_RSB
 	select SUNXI_GEN_SUN6I
 	select SUPPORT_SPL
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
@@ -254,6 +255,7 @@ config MACH_SUN8I_A33
 	select ARCH_SUPPORT_PSCI
 	select DRAM_SUN8I_A33
 	select PHY_SUN4I_USB
+	select SUN8I_RSB
 	select SUNXI_GEN_SUN6I
 	select SUPPORT_SPL
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
@@ -264,6 +266,7 @@ config MACH_SUN8I_A83T
 	select CPU_V7A
 	select DRAM_SUN8I_A83T
 	select PHY_SUN4I_USB
+	select SUN8I_RSB
 	select SUNXI_GEN_SUN6I
 	select MMC_SUNXI_HAS_NEW_MODE
 	select MMC_SUNXI_HAS_MODE_SWITCH
@@ -358,7 +361,6 @@ endchoice
 # The sun8i SoCs share a lot, this helps to avoid a lot of "if A23 || A33"
 config MACH_SUN8I
 	bool
-	select SUN8I_RSB
 	select SUN6I_PRCM
 	default y if MACH_SUN8I_A23
 	default y if MACH_SUN8I_A33
