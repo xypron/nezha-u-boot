@@ -118,8 +118,6 @@ config SYSRESET_TI_SCI
 	  This enables the system reset driver support over TI System Control
 	  Interface available on some new TI's SoCs.
 
-endif
-
 config SYSRESET_SYSCON
 	bool "Enable support for mfd syscon reboot driver"
 	select REGMAP
@@ -138,6 +136,8 @@ config SYSRESET_RESETCTL
 	select DM_RESET
 	help
 	  Reboot support using generic reset controller.
+
+endif
 
 config SYSRESET_X86
 	bool "Enable support for x86 processor reboot driver"
