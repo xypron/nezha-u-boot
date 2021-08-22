@@ -118,4 +118,18 @@ void sysreset_walk_halt(enum sysreset_t type);
  */
 void reset_cpu(void);
 
+/**
+ * sysreset_register_wdt() - register a watchdog for use with sysreset
+ *
+ * This registers the given watchdog timer to be used to reset the system.
+ *
+ * @dev:	WDT device
+ * @return:	0 if OK, -errno if error
+ */
+#if IS_ENABLED(CONFIG_SYSRESET_WATCHDOG_AUTO)
+int sysreset_register_wdt(struct udevice *dev);
+#else
+static inline int sysreset_register_wdt(struct udevice *dev) { return 0; }
+#endif
+
 #endif
