@@ -347,6 +347,7 @@ void board_init_f(ulong dummy)
 }
 #endif
 
+#if !CONFIG_IS_ENABLED(SYSRESET)
 void reset_cpu(void)
 {
 #if defined(CONFIG_SUNXI_GEN_SUN4I) || defined(CONFIG_MACH_SUN8I_R40)
@@ -377,6 +378,7 @@ void reset_cpu(void)
 	while (1) { }
 #endif
 }
+#endif
 
 #if !CONFIG_IS_ENABLED(SYS_DCACHE_OFF) && !defined(CONFIG_ARM64)
 void enable_caches(void)
