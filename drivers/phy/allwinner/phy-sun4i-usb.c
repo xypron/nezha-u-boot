@@ -97,27 +97,22 @@ struct sun4i_usb_phy_cfg {
 };
 
 struct sun4i_usb_phy_info {
-	const char *gpio_vbus;
 	const char *gpio_vbus_det;
 	const char *gpio_id_det;
 } phy_info[] = {
 	{
-		.gpio_vbus = CONFIG_USB0_VBUS_PIN,
 		.gpio_vbus_det = CONFIG_USB0_VBUS_DET,
 		.gpio_id_det = CONFIG_USB0_ID_DET,
 	},
 	{
-		.gpio_vbus = CONFIG_USB1_VBUS_PIN,
 		.gpio_vbus_det = NULL,
 		.gpio_id_det = NULL,
 	},
 	{
-		.gpio_vbus = CONFIG_USB2_VBUS_PIN,
 		.gpio_vbus_det = NULL,
 		.gpio_id_det = NULL,
 	},
 	{
-		.gpio_vbus = CONFIG_USB3_VBUS_PIN,
 		.gpio_vbus_det = NULL,
 		.gpio_id_det = NULL,
 	},
@@ -126,11 +121,11 @@ struct sun4i_usb_phy_info {
 struct sun4i_usb_phy_plat {
 	void __iomem *pmu;
 	int power_on_count;
-	int gpio_vbus;
 	int gpio_vbus_det;
 	int gpio_id_det;
 	struct clk clocks;
 	struct reset_ctl resets;
+	struct udevice *vbus;
 	int id;
 };
 
@@ -229,8 +224,8 @@ static int sun4i_usb_phy_power_on(struct phy *phy)
 	if (usb_phy->power_on_count != 1)
 		return 0;
 
-	if (usb_phy->gpio_vbus >= 0)
-		gpio_set_value(usb_phy->gpio_vbus, SUNXI_GPIO_PULL_UP);
+	if (usb_phy->vbus)
+		return regulator_set_enable(usb_phy->vbus, true);
 
 	return 0;
 }
@@ -244,8 +239,8 @@ static int sun4i_usb_phy_power_off(struct phy *phy)
 	if (usb_phy->power_on_count != 0)
 		return 0;
 
-	if (usb_phy->gpio_vbus >= 0)
-		gpio_set_value(usb_phy->gpio_vbus, SUNXI_GPIO_PULL_DISABLE);
+	if (usb_phy->vbus)
+		return regulator_set_enable(usb_phy->vbus, false);
 
 	return 0;
 }
@@ -458,18 +453,17 @@ static int sun4i_usb_phy_probe(struct udevice *dev)
 	for (i = 0; i < data->cfg->num_phys; i++) {
 		struct sun4i_usb_phy_plat *phy = &plat[i];
 		struct sun4i_usb_phy_info *info = &phy_info[i];
-		char name[16];
+		char name[20];
 
 		if (data->cfg->missing_phys & BIT(i))
 			continue;
 
-		phy->gpio_vbus = sunxi_name_to_gpio(info->gpio_vbus);
-		if (phy->gpio_vbus >= 0) {
-			ret = gpio_request(phy->gpio_vbus, "usb_vbus");
-			if (ret)
-				return ret;
-			ret = gpio_direction_output(phy->gpio_vbus, 0);
-			if (ret)
+		snprintf(name, sizeof(name), "usb%d_vbus-supply", i);
+		ret = device_get_supply_regulator(dev, name, &phy->vbus);
+		if (phy->vbus) {
+			ret = regulator_set_enable(phy->vbus, false);
+			/* Fixed regulators cannot be disabled. */
+			if (ret && ret != -ENOSYS)
 				return ret;
 		}
 
