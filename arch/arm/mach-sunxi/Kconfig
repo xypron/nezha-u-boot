@@ -736,12 +736,6 @@ config I2C4_ENABLE
 	See I2C0_ENABLE help text.
 endif
 
-config AXP_GPIO
-	bool "Enable support for gpio-s on axp PMICs"
-	depends on AXP_PMIC_BUS
-	---help---
-	Say Y here to enable support for the gpio pins of the axp PMIC ICs.
-
 config VIDEO_SUNXI
 	bool "Enable graphical uboot console on HDMI, LCD or VGA"
 	depends on !MACH_SUN8I_A83T
