@@ -226,6 +226,8 @@ static const struct sunxi_pinctrl_function sun4i_a10_pinctrl_functions[] = {
 	{ "emac",	2 },	/* PA0-PA17 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PB0-PB1 */
+	{ "i2c1",	2 },	/* PB18-PB19 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	4 },	/* PF2-PF4 */
 #else
@@ -244,6 +246,8 @@ static const struct sunxi_pinctrl_function sun5i_a13_pinctrl_functions[] = {
 	{ "emac",	2 },	/* PA0-PA17 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PB0-PB1 */
+	{ "i2c1",	2 },	/* PB15-PB16 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	4 },	/* PF2-PF4 */
 #else
@@ -263,6 +267,8 @@ static const struct sunxi_pinctrl_function sun6i_a31_pinctrl_functions[] = {
 	{ "gmac",	2 },	/* PA0-PA27 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PH14-PH15 */
+	{ "i2c1",	2 },	/* PH16-PH17 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -280,6 +286,7 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun6i_a31_pinctrl_desc = {
 static const struct sunxi_pinctrl_function sun6i_a31_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c",	2 },	/* PL0-PL1 */
 	{ "s_uart",	2 },	/* PL2-PL3 */
 };
 
@@ -295,6 +302,8 @@ static const struct sunxi_pinctrl_function sun7i_a20_pinctrl_functions[] = {
 	{ "gmac",	5 },	/* PA0-PA17 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PB0-PB1 */
+	{ "i2c1",	2 },	/* PB18-PB19 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	4 },	/* PF2-PF4 */
 #else
@@ -312,6 +321,8 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun7i_a20_pinctrl_desc = {
 static const struct sunxi_pinctrl_function sun8i_a23_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PH2-PH3 */
+	{ "i2c1",	2 },	/* PH4-PH5 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #endif
@@ -329,6 +340,7 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun8i_a23_pinctrl_desc = {
 static const struct sunxi_pinctrl_function sun8i_a23_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c",	3 },	/* PL0-PL1 */
 	{ "s_uart",	2 },	/* PL2-PL3 */
 };
 
@@ -342,6 +354,8 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun8i_a23_r_pinctrl_desc =
 static const struct sunxi_pinctrl_function sun8i_a33_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PH2-PH3 */
+	{ "i2c1",	2 },	/* PH4-PH5 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -362,6 +376,8 @@ static const struct sunxi_pinctrl_function sun8i_a83t_pinctrl_functions[] = {
 	{ "gmac",	4 },	/* PD2-PD23 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PH0-PH1 */
+	{ "i2c1",	2 },	/* PH2-PH3 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -381,6 +397,7 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun8i_a83t_pinctrl_desc = 
 static const struct sunxi_pinctrl_function sun8i_a83t_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c",	2 },	/* PL8-PL9 */
 	{ "s_uart",	2 },	/* PL2-PL3 */
 };
 
@@ -395,6 +412,8 @@ static const struct sunxi_pinctrl_function sun8i_h3_pinctrl_functions[] = {
 	{ "emac",	2 },	/* PD0-PD17 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PA11-PA12 */
+	{ "i2c1",	3 },	/* PA18-PA19 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -414,6 +433,7 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun8i_h3_pinctrl_desc = {
 static const struct sunxi_pinctrl_function sun8i_h3_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c",	2 },	/* PL0-PL1 */
 	{ "s_uart",	2 },	/* PL2-PL3 */
 };
 
@@ -428,6 +448,8 @@ static const struct sunxi_pinctrl_function sun8i_v3s_pinctrl_functions[] = {
 	{ "emac",	4 },	/* PD0-PD17 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PB6-PB7 */
+	{ "i2c1",	2 },	/* PB8-PB9 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -448,6 +470,8 @@ static const struct sunxi_pinctrl_function sun9i_a80_pinctrl_functions[] = {
 	{ "gmac",	2 },	/* PA0-PA17 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PH0-PH1 */
+	{ "i2c1",	2 },	/* PH2-PH3 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	4 },	/* PF2-PF4 */
 #else
@@ -465,6 +489,8 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun9i_a80_pinctrl_desc = {
 static const struct sunxi_pinctrl_function sun9i_a80_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c0",	2 },	/* PN0-PN1 */
+	{ "s_i2c1",	3 },	/* PM8-PM9 */
 	{ "s_uart",	3 },	/* PL0-PL1 */
 };
 
@@ -479,6 +505,8 @@ static const struct sunxi_pinctrl_function sun50i_a64_pinctrl_functions[] = {
 	{ "emac",	4 },	/* PD8-PD23 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PH0-PH1 */
+	{ "i2c1",	2 },	/* PH2-PH3 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -498,6 +526,7 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun50i_a64_pinctrl_desc = 
 static const struct sunxi_pinctrl_function sun50i_a64_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c",	2 },	/* PL8-PL9 */
 	{ "s_uart",	2 },	/* PL2-PL3 */
 };
 
@@ -512,6 +541,8 @@ static const struct sunxi_pinctrl_function sun50i_h5_pinctrl_functions[] = {
 	{ "emac",	2 },	/* PD0-PD17 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PA11-PA12 */
+	{ "i2c1",	2 },	/* PA18-PA19 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -532,6 +563,8 @@ static const struct sunxi_pinctrl_function sun50i_h6_pinctrl_functions[] = {
 	{ "emac",	5 },	/* PD0-PD20 */
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "i2c0",	2 },	/* PD25-PD26 */
+	{ "i2c1",	4 },	/* PH5-PH6 */
 #if IS_ENABLED(CONFIG_UART0_PORT_F)
 	{ "uart0",	3 },	/* PF2-PF4 */
 #else
@@ -550,6 +583,7 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun50i_h6_pinctrl_desc = {
 static const struct sunxi_pinctrl_function sun50i_h6_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c",	3 },	/* PL0-PL1 */
 	{ "s_uart",	2 },	/* PL2-PL3 */
 };
 
@@ -582,6 +616,7 @@ static const struct sunxi_pinctrl_desc __maybe_unused sun50i_h616_pinctrl_desc =
 static const struct sunxi_pinctrl_function sun50i_h616_r_pinctrl_functions[] = {
 	{ "gpio_in",	0 },
 	{ "gpio_out",	1 },
+	{ "s_i2c",	3 },	/* PL0-PL1 */
 	{ "s_uart",	2 },	/* PL2-PL3 */
 };
 
