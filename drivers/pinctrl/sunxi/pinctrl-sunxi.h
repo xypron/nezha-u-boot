@@ -34,6 +34,7 @@ extern const struct sunxi_pinctrl_desc sun8i_h3_r_pinctrl_desc;
 extern const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_desc;
 extern const struct sunxi_pinctrl_desc sun9i_a80_pinctrl_desc;
 extern const struct sunxi_pinctrl_desc sun9i_a80_r_pinctrl_desc;
+extern const struct sunxi_pinctrl_desc sun20i_d1_pinctrl_desc;
 extern const struct sunxi_pinctrl_desc sun50i_a64_pinctrl_desc;
 extern const struct sunxi_pinctrl_desc sun50i_a64_r_pinctrl_desc;
 extern const struct sunxi_pinctrl_desc sun50i_h5_pinctrl_desc;

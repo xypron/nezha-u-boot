@@ -307,6 +307,12 @@ static const struct udevice_id sunxi_pinctrl_ids[] = {
 		.data = (ulong)&sun9i_a80_r_pinctrl_desc,
 	},
 #endif
+#if IS_ENABLED(CONFIG_PINCTRL_SUN20I_D1)
+	{
+		.compatible = "allwinner,sun20i-d1-pinctrl",
+		.data = (ulong)&sun20i_d1_pinctrl_desc,
+	},
+#endif
 #if IS_ENABLED(CONFIG_PINCTRL_SUN50I_A64)
 	{
 		.compatible = "allwinner,sun50i-a64-pinctrl",
