@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
 
-#include <asm/gpio.h>
+//#include <asm/gpio.h>
+#include <common.h>
+#include "../../../arch/arm/include/asm/arch-sunxi/gpio.h"
 
 /* "gpio_out" including the null terminator */
 #define FUNCTION_NAME_MAX		9
