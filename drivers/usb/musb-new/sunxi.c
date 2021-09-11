@@ -23,8 +23,8 @@
 #include <malloc.h>
 #include <phy-sun4i-usb.h>
 #include <reset.h>
-#include <asm/arch/cpu.h>
-#include <asm/arch/clock.h>
+//#include <asm/arch/cpu.h>
+//#include <asm/arch/clock.h>
 #include <dm/device_compat.h>
 #include <dm/lists.h>
 #include <dm/root.h>
@@ -173,6 +173,7 @@ static void USBC_ForceVbusValidToHigh(__iomem void *base)
 
 static void USBC_ConfigFIFO_Base(void)
 {
+#if 0
 	u32 reg_value;
 
 	/* config usb fifo, 8kb mode */
@@ -180,6 +181,7 @@ static void USBC_ConfigFIFO_Base(void)
 	reg_value &= ~(0x03 << 0);
 	reg_value |= BIT(0);
 	writel(reg_value, SUNXI_SRAMC_BASE + 0x04);
+#endif
 }
 
 /******************************************************************************
