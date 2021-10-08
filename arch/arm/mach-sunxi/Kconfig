@@ -88,17 +88,6 @@ config DRAM_SUN50I_H616_UNKNOWN_FEATURE
 	  feature.
 endif
 
-config SUN6I_P2WI
-	bool "Allwinner sun6i internal P2WI controller"
-	help
-	  If you say yes to this option, support will be included for the
-	  P2WI (Push/Pull 2 Wire Interface) controller embedded in some sunxi
-	  SOCs.
-	  The P2WI looks like an SMBus controller (which supports only byte
-	  accesses), except that it only supports one slave device.
-	  This interface is used to connect to specific PMIC devices (like the
-	  AXP221).
-
 config SUN6I_PRCM
 	bool
 	help
@@ -106,18 +95,12 @@ config SUN6I_PRCM
 	  in A31 SoC.
 
 config AXP_PMIC_BUS
-	bool "Sunxi AXP PMIC bus access helpers"
+	bool
+	select DM_PMIC if DM_I2C
+	select PMIC_AXP if DM_I2C
 	help
 	  Select this PMIC bus access helpers for Sunxi platform PRCM or other
 	  AXP family PMIC devices.
-
-config SUN8I_RSB
-	bool "Allwinner sunXi Reduced Serial Bus Driver"
-	help
-	  Say y here to enable support for Allwinner's Reduced Serial Bus
-	  (RSB) support. This controller is responsible for communicating
-	  with various RSB based devices, such as AXP223, AXP8XX PMICs,
-	  and AC100/AC200 ICs.
 
 config SUNXI_SRAM_ADDRESS
 	hex
@@ -182,7 +165,6 @@ endif
 
 config MACH_SUNXI_H3_H5
 	bool
-	select DM_I2C
 	select PHY_SUN4I_USB
 	select SUNXI_DE2
 	select SUNXI_DRAM_DW
@@ -260,6 +242,7 @@ config MACH_SUN8I_A23
 	select ARCH_SUPPORT_PSCI
 	select DRAM_SUN8I_A23
 	select PHY_SUN4I_USB
+	select SUN8I_RSB
 	select SUNXI_GEN_SUN6I
 	select SUPPORT_SPL
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
@@ -273,6 +256,7 @@ config MACH_SUN8I_A33
 	select ARCH_SUPPORT_PSCI
 	select DRAM_SUN8I_A33
 	select PHY_SUN4I_USB
+	select SUN8I_RSB
 	select SUNXI_GEN_SUN6I
 	select SUPPORT_SPL
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
@@ -283,6 +267,7 @@ config MACH_SUN8I_A83T
 	select CPU_V7A
 	select DRAM_SUN8I_A83T
 	select PHY_SUN4I_USB
+	select SUN8I_RSB
 	select SUNXI_GEN_SUN6I
 	select MMC_SUNXI_HAS_NEW_MODE
 	select MMC_SUNXI_HAS_MODE_SWITCH
@@ -336,7 +321,6 @@ config MACH_SUN50I
 	bool "sun50i (Allwinner A64)"
 	select ARM64
 	select SPI
-	select DM_I2C
 	select DM_SPI if SPI
 	select DM_SPI_FLASH
 	select PHY_SUN4I_USB
@@ -377,7 +361,6 @@ endchoice
 # The sun8i SoCs share a lot, this helps to avoid a lot of "if A23 || A33"
 config MACH_SUN8I
 	bool
-	select SUN8I_RSB
 	select SUN6I_PRCM
 	default y if MACH_SUN8I_A23
 	default y if MACH_SUN8I_A33
@@ -713,49 +696,6 @@ config INITIAL_USB_SCAN_DELAY
 	option to a non 0 value to add an extra delay before the first usb
 	bus scan.
 
-config USB0_VBUS_PIN
-	string "Vbus enable pin for usb0 (otg)"
-	default ""
-	---help---
-	Set the Vbus enable pin for usb0 (otg). This takes a string in the
-	format understood by sunxi_name_to_gpio, e.g. PH1 for pin 1 of port H.
-
-config USB0_VBUS_DET
-	string "Vbus detect pin for usb0 (otg)"
-	default ""
-	---help---
-	Set the Vbus detect pin for usb0 (otg). This takes a string in the
-	format understood by sunxi_name_to_gpio, e.g. PH1 for pin 1 of port H.
-
-config USB0_ID_DET
-	string "ID detect pin for usb0 (otg)"
-	default ""
-	---help---
-	Set the ID detect pin for usb0 (otg). This takes a string in the
-	format understood by sunxi_name_to_gpio, e.g. PH1 for pin 1 of port H.
-
-config USB1_VBUS_PIN
-	string "Vbus enable pin for usb1 (ehci0)"
-	default "PH6" if MACH_SUN4I || MACH_SUN7I
-	default "PH27" if MACH_SUN6I
-	---help---
-	Set the Vbus enable pin for usb1 (ehci0, usb0 is the otg). This takes
-	a string in the format understood by sunxi_name_to_gpio, e.g.
-	PH1 for pin 1 of port H.
-
-config USB2_VBUS_PIN
-	string "Vbus enable pin for usb2 (ehci1)"
-	default "PH3" if MACH_SUN4I || MACH_SUN7I
-	default "PH24" if MACH_SUN6I
-	---help---
-	See USB1_VBUS_PIN help text.
-
-config USB3_VBUS_PIN
-	string "Vbus enable pin for usb3 (ehci2)"
-	default ""
-	---help---
-	See USB1_VBUS_PIN help text.
-
 config I2C0_ENABLE
 	bool "Enable I2C/TWI controller 0"
 	default y if MACH_SUN4I || MACH_SUN5I || MACH_SUN7I || MACH_SUN8I_R40
@@ -807,6 +747,7 @@ endif
 
 config AXP_GPIO
 	bool "Enable support for gpio-s on axp PMICs"
+	depends on AXP_PMIC_BUS
 	---help---
 	Say Y here to enable support for the gpio pins of the axp PMIC ICs.
 
@@ -932,27 +873,17 @@ config VIDEO_LCD_BL_PWM_ACTIVE_LOW
 config VIDEO_LCD_PANEL_I2C
 	bool "LCD panel needs to be configured via i2c"
 	depends on VIDEO_SUNXI
-	select CMD_I2C
+	select DM_I2C_GPIO
 	---help---
 	Say y here if the LCD panel needs to be configured via i2c. This
 	will add a bitbang i2c controller using gpios to talk to the LCD.
 
-config VIDEO_LCD_PANEL_I2C_SDA
-	string "LCD panel i2c interface SDA pin"
+config VIDEO_LCD_PANEL_I2C_NAME
+	string "LCD panel i2c interface node name"
 	depends on VIDEO_LCD_PANEL_I2C
-	default "PG12"
+	default "i2c@0"
 	---help---
-	Set the SDA pin for the LCD i2c interface. This takes a string in the
-	format understood by sunxi_name_to_gpio, e.g. PH1 for pin 1 of port H.
-
-config VIDEO_LCD_PANEL_I2C_SCL
-	string "LCD panel i2c interface SCL pin"
-	depends on VIDEO_LCD_PANEL_I2C
-	default "PG10"
-	---help---
-	Set the SCL pin for the LCD i2c interface. This takes a string in the
-	format understood by sunxi_name_to_gpio, e.g. PH1 for pin 1 of port H.
-
+	Set the device tree node name for the LCD i2c interface.
 
 # Note only one of these may be selected at a time! But hidden choices are
 # not supported by Kconfig

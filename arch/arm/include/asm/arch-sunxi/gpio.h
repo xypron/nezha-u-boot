@@ -93,20 +93,10 @@ struct sunxi_gpio_reg {
 #define GPIO_PULL_OFFSET(pin)	((((pin) & 0x1f) & 0xf) << 1)
 
 /* GPIO bank sizes */
-#define SUNXI_GPIO_A_NR		32
-#define SUNXI_GPIO_B_NR		32
-#define SUNXI_GPIO_C_NR		32
-#define SUNXI_GPIO_D_NR		32
-#define SUNXI_GPIO_E_NR		32
-#define SUNXI_GPIO_F_NR		32
-#define SUNXI_GPIO_G_NR		32
-#define SUNXI_GPIO_H_NR		32
-#define SUNXI_GPIO_I_NR		32
-#define SUNXI_GPIO_L_NR		32
-#define SUNXI_GPIO_M_NR		32
+#define SUNXI_GPIOS_PER_BANK	32
 
 #define SUNXI_GPIO_NEXT(__gpio) \
-	((__gpio##_START) + (__gpio##_NR) + 0)
+	((__gpio##_START) + SUNXI_GPIOS_PER_BANK)
 
 enum sunxi_gpio_number {
 	SUNXI_GPIO_A_START = 0,
@@ -121,7 +111,6 @@ enum sunxi_gpio_number {
 	SUNXI_GPIO_L_START = 352,
 	SUNXI_GPIO_M_START = SUNXI_GPIO_NEXT(SUNXI_GPIO_L),
 	SUNXI_GPIO_N_START = SUNXI_GPIO_NEXT(SUNXI_GPIO_M),
-	SUNXI_GPIO_AXP0_START = 1024,
 };
 
 /* SUNXI GPIO number definitions */
@@ -137,8 +126,6 @@ enum sunxi_gpio_number {
 #define SUNXI_GPL(_nr)	(SUNXI_GPIO_L_START + (_nr))
 #define SUNXI_GPM(_nr)	(SUNXI_GPIO_M_START + (_nr))
 #define SUNXI_GPN(_nr)	(SUNXI_GPIO_N_START + (_nr))
-
-#define SUNXI_GPAXP0(_nr)	(SUNXI_GPIO_AXP0_START + (_nr))
 
 /* GPIO pin function config */
 #define SUNXI_GPIO_INPUT	0
@@ -230,21 +217,16 @@ enum sunxi_gpio_number {
 #define SUNXI_GPIO_PULL_UP	1
 #define SUNXI_GPIO_PULL_DOWN	2
 
-/* Virtual AXP0 GPIOs */
-#define SUNXI_GPIO_AXP0_PREFIX "AXP0-"
-#define SUNXI_GPIO_AXP0_VBUS_DETECT	4
-#define SUNXI_GPIO_AXP0_VBUS_ENABLE	5
-#define SUNXI_GPIO_AXP0_GPIO_COUNT	6
-
 void sunxi_gpio_set_cfgbank(struct sunxi_gpio *pio, int bank_offset, u32 val);
 void sunxi_gpio_set_cfgpin(u32 pin, u32 val);
 int sunxi_gpio_get_cfgbank(struct sunxi_gpio *pio, int bank_offset);
 int sunxi_gpio_get_cfgpin(u32 pin);
-int sunxi_gpio_set_drv(u32 pin, u32 val);
-int sunxi_gpio_set_pull(u32 pin, u32 val);
+void sunxi_gpio_set_drv(u32 pin, u32 val);
+void sunxi_gpio_set_drv_bank(struct sunxi_gpio *pio, u32 bank_offset, u32 val);
+void sunxi_gpio_set_pull(u32 pin, u32 val);
+void sunxi_gpio_set_pull_bank(struct sunxi_gpio *pio, int bank_offset, u32 val);
 int sunxi_name_to_gpio_bank(const char *name);
 int sunxi_name_to_gpio(const char *name);
-#define name_to_gpio(name) sunxi_name_to_gpio(name)
 
 #if !defined CONFIG_SPL_BUILD && defined CONFIG_AXP_GPIO
 int axp_gpio_init(void);
