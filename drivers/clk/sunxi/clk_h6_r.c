@@ -5,7 +5,7 @@
 
 #include <clk-uclass.h>
 #include <dm.h>
-#include <asm/arch/ccu.h>
+#include <clk/sunxi.h>
 #include <dt-bindings/clock/sun50i-h6-r-ccu.h>
 #include <dt-bindings/reset/sun50i-h6-r-ccu.h>
 #include <linux/bitops.h>
