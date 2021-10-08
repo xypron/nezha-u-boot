@@ -132,9 +132,6 @@ enum sunxi_gpio_number {
 #define SUNXI_GPIO_OUTPUT	1
 #define SUNXI_GPIO_DISABLE	7
 
-#define SUNXI_GPA_EMAC		2
-#define SUN6I_GPA_GMAC		2
-#define SUN7I_GPA_GMAC		5
 #define SUN8I_H3_GPA_UART0	2
 
 #define SUN4I_GPB_PWM		2
@@ -160,7 +157,6 @@ enum sunxi_gpio_number {
 
 #define SUNXI_GPD_LCD0		2
 #define SUNXI_GPD_LVDS0		3
-#define SUNXI_GPD_PWM		2
 
 #define SUN8I_GPE_TWI2		3
 #define SUN50I_GPE_TWI2		3
@@ -228,5 +224,10 @@ int axp_gpio_init(void);
 #else
 static inline int axp_gpio_init(void) { return 0; }
 #endif
+
+struct sunxi_gpio_plat {
+	struct sunxi_gpio *regs;
+	char bank_name[3];
+};
 
 #endif /* _SUNXI_GPIO_H */
