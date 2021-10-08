@@ -15,11 +15,11 @@
 #include <mmc.h>
 #include <clk.h>
 #include <reset.h>
+#include <asm/gpio.h>
 #include <asm/io.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/cpu.h>
 #include <asm/arch/mmc.h>
-#include <asm/gpio.h>
 #include <linux/delay.h>
 
 #ifndef CCM_MMC_CTRL_MODE_SEL_NEW

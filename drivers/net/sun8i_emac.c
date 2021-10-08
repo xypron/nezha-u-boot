@@ -14,6 +14,7 @@
 #include <log.h>
 #include <asm/cache.h>
 #include <asm/global_data.h>
+#include <asm/gpio.h>
 #include <asm/io.h>
 #include <asm/arch/clock.h>
 #include <common.h>
@@ -29,9 +30,6 @@
 #include <net.h>
 #include <reset.h>
 #include <wait_bit.h>
-#if CONFIG_IS_ENABLED(DM_GPIO)
-#include <asm-generic/gpio.h>
-#endif
 
 #define MDIO_CMD_MII_BUSY		BIT(0)
 #define MDIO_CMD_MII_WRITE		BIT(1)
