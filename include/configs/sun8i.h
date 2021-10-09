@@ -8,6 +8,10 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#define SUNXI_RESUME_BASE		(CONFIG_ARMV7_SECURE_BASE + \
+					 CONFIG_ARMV7_SECURE_MAX_SIZE)
+#define SUNXI_RESUME_SIZE		1024
+
 #include <configs/sunxi-common.h>
 
 #endif /* __CONFIG_H */
