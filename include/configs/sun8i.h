@@ -12,6 +12,8 @@
  * A23 specific configuration
  */
 
+#include <asm/arch/cpu.h>
+
 #ifdef SUNXI_SRAM_A2_SIZE
 /*
  * If the SoC has enough SRAM A2, use that for the secure monitor.
@@ -20,6 +22,13 @@
  */
 #define CONFIG_ARMV7_SECURE_BASE	(SUNXI_SRAM_A2_BASE + 16 * 1024)
 #define CONFIG_ARMV7_SECURE_MAX_SIZE	(SUNXI_SRAM_A2_SIZE - 33 * 1024)
+
+#define SUNXI_RESUME_BASE		(CONFIG_ARMV7_SECURE_BASE + \
+					 CONFIG_ARMV7_SECURE_MAX_SIZE)
+#define SUNXI_RESUME_SIZE		1024
+
+#define SUNXI_SCP_BASE			(SUNXI_RESUME_BASE + SUNXI_RESUME_SIZE)
+#define SUNXI_SCP_MAX_SIZE		(16 * 1024)
 #endif
 
 /*
