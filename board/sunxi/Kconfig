@@ -1,7 +1,7 @@
 menu "Board-specific options"
 	depends on ARCH_SUNXI || TARGET_SUNXI
 
-choice
+choice MACH_SUNXI
 	prompt "sunxi SoC Variant"
 
 config MACH_SUN20I
@@ -16,7 +16,7 @@ endchoice
 config NR_DRAM_BANKS
 	default 1
 
-choice
+choice SPL_IMAGE_TYPE_SUNXI
 	prompt "SPL Image Type"
 	depends on SPL
 	default SPL_IMAGE_TYPE_SUNXI_EGON
