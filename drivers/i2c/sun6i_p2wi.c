@@ -14,10 +14,12 @@
  */
 
 #include <axp_pmic.h>
+#include <clk.h>
 #include <common.h>
 #include <dm.h>
 #include <errno.h>
 #include <i2c.h>
+#include <reset.h>
 #include <time.h>
 #include <asm/io.h>
 #include <asm/arch/cpu.h>
@@ -180,8 +182,19 @@ static int sun6i_p2wi_probe_chip(struct udevice *bus, uint chip_addr,
 static int sun6i_p2wi_probe(struct udevice *bus)
 {
 	struct sun6i_p2wi_priv *priv = dev_get_priv(bus);
+	struct reset_ctl reset;
+	struct clk clk;
+	int ret;
 
 	priv->base = dev_read_addr_ptr(bus);
+
+	ret = reset_get_by_index(bus, 0, &reset);
+	if (!ret)
+		reset_deassert(&reset);
+
+	ret = clk_get_by_index(bus, 0, &clk);
+	if (!ret)
+		clk_enable(&clk);
 
 	sun6i_p2wi_init(priv->base);
 
