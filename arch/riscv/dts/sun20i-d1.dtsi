@@ -1151,6 +1151,7 @@
 				     "sifive,clint0";
 			reg = <0x14000000 0xc000>;
 			reg-io-width = <4>;
+			clint,has-no-64bit-mmio;
 			interrupts-extended = <&cpu0_intc 3>,
 					      <&cpu0_intc 7>;
 		};
