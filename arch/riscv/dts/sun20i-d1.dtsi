@@ -1136,7 +1136,7 @@
 
 		plic: interrupt-controller@10000000 {
 			compatible = "allwinner,sun20i-d1-plic",
-				     "sifive,plic-1.0.0";
+				     "thead,c900-plic";
 			reg = <0x10000000 0x4000000>;
 			#address-cells = <0>;
 			interrupts-extended = <&cpu0_intc 11>,
