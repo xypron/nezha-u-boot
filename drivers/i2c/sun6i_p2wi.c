@@ -14,10 +14,12 @@
  */
 
 #include <axp_pmic.h>
+#include <clk.h>
 #include <common.h>
 #include <dm.h>
 #include <errno.h>
 #include <i2c.h>
+#include <reset.h>
 #include <time.h>
 #include <asm/io.h>
 #include <asm/arch/cpu.h>
@@ -102,12 +104,6 @@ static int sun6i_p2wi_change_to_p2wi_mode(struct sunxi_p2wi_reg *base,
 
 static void sun6i_p2wi_init(struct sunxi_p2wi_reg *base)
 {
-	/* Enable p2wi and PIO clk, and de-assert their resets */
-	prcm_apb0_enable(PRCM_APB0_GATE_PIO | PRCM_APB0_GATE_P2WI);
-
-	sunxi_gpio_set_cfgpin(SUNXI_GPL(0), SUN6I_GPL0_R_P2WI_SCK);
-	sunxi_gpio_set_cfgpin(SUNXI_GPL(1), SUN6I_GPL1_R_P2WI_SDA);
-
 	/* Reset p2wi controller and set clock to CLKIN(12)/8 = 1.5 MHz */
 	writel(P2WI_CTRL_RESET, &base->ctrl);
 	sdelay(0x100);
@@ -141,6 +137,12 @@ int p2wi_change_to_p2wi_mode(u8 slave_addr, u8 ctrl_reg, u8 init_data)
 void p2wi_init(void)
 {
 	struct sunxi_p2wi_reg *base = (struct sunxi_p2wi_reg *)SUN6I_P2WI_BASE;
+
+	/* Enable p2wi and PIO clk, and de-assert their resets */
+	prcm_apb0_enable(PRCM_APB0_GATE_PIO | PRCM_APB0_GATE_P2WI);
+
+	sunxi_gpio_set_cfgpin(SUNXI_GPL(0), SUN6I_GPL0_R_P2WI_SCK);
+	sunxi_gpio_set_cfgpin(SUNXI_GPL(1), SUN6I_GPL1_R_P2WI_SDA);
 
 	sun6i_p2wi_init(base);
 }
@@ -180,8 +182,19 @@ static int sun6i_p2wi_probe_chip(struct udevice *bus, uint chip_addr,
 static int sun6i_p2wi_probe(struct udevice *bus)
 {
 	struct sun6i_p2wi_priv *priv = dev_get_priv(bus);
+	struct reset_ctl reset;
+	struct clk clk;
+	int ret;
 
 	priv->base = dev_read_addr_ptr(bus);
+
+	ret = reset_get_by_index(bus, 0, &reset);
+	if (!ret)
+		reset_deassert(&reset);
+
+	ret = clk_get_by_index(bus, 0, &clk);
+	if (!ret)
+		clk_enable(&clk);
 
 	sun6i_p2wi_init(priv->base);
 
