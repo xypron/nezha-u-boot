@@ -17,7 +17,6 @@
 #define CONFIG_SPL_STACK		0x00048000
 
 #define SDRAM_OFFSET(x)			0x4##x
-#define BOOTM_SIZE			__stringify(0xa000000)
 #define KERNEL_ADDR_R			__stringify(SDRAM_OFFSET(0200000))
 #define KERNEL_COMP_ADDR_R		__stringify(SDRAM_OFFSET(4000000))
 #define KERNEL_COMP_SIZE		__stringify(0xb000000)
@@ -28,7 +27,6 @@
 #define RAMDISK_ADDR_R			__stringify(SDRAM_OFFSET(FF00000))
 
 #define MEM_LAYOUT_ENV_SETTINGS \
-	"bootm_size=" BOOTM_SIZE "\0" \
 	"fdt_addr_r=" FDT_ADDR_R "\0" \
 	"fdtoverlay_addr_r=" FDTOVERLAY_ADDR_R "\0" \
 	"kernel_addr_r=" KERNEL_ADDR_R "\0" \
