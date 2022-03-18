@@ -14,10 +14,12 @@
  */
 
 #include <axp_pmic.h>
+#include <clk.h>
 #include <common.h>
 #include <dm.h>
 #include <errno.h>
 #include <i2c.h>
+#include <reset.h>
 #include <time.h>
 #include <asm/io.h>
 #include <asm/arch/cpu.h>
@@ -180,8 +182,18 @@ static int sun6i_p2wi_probe_chip(struct udevice *bus, uint chip_addr,
 static int sun6i_p2wi_probe(struct udevice *bus)
 {
 	struct sun6i_p2wi_priv *priv = dev_get_priv(bus);
+	struct reset_ctl *reset;
+	struct clk *clk;
 
 	priv->base = dev_read_addr_ptr(bus);
+
+	reset = devm_reset_control_get(bus, NULL);
+	if (!IS_ERR(reset))
+		reset_deassert(reset);
+
+	clk = devm_clk_get(bus, NULL);
+	if (!IS_ERR(clk))
+		clk_enable(clk);
 
 	sun6i_p2wi_init(priv->base);
 
@@ -191,11 +203,12 @@ static int sun6i_p2wi_probe(struct udevice *bus)
 static int sun6i_p2wi_child_pre_probe(struct udevice *child)
 {
 	struct dm_i2c_chip *chip = dev_get_parent_plat(child);
+	struct udevice *bus = child->parent;
 
 	/* Ensure each transfer is for a single register. */
 	chip->flags |= DM_I2C_CHIP_RD_ADDRESS | DM_I2C_CHIP_WR_ADDRESS;
 
-	return 0;
+	return sun6i_p2wi_probe_chip(bus, chip->chip_addr, 0);
 }
 
 static const struct dm_i2c_ops sun6i_p2wi_ops = {
