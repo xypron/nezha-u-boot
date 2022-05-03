@@ -38,12 +38,21 @@ config CLK_SUN6I_A31
 	  This enables common clock driver support for platforms based
 	  on Allwinner A31/A31s SoC.
 
+config CLK_SUN6I_A31_APB0
+	bool "Clock driver for Allwinner A31 generation PRCM (legacy)"
+	default MACH_SUN6I || MACH_SUN8I_A23 || MACH_SUN8I_A33
+	help
+	  This enables common clock driver support for the PRCM
+	  in Allwinner A31/A31s/A23/A33 SoCs using the legacy PRCM
+	  MFD binding.
+
 config CLK_SUN6I_A31_R
-	bool "Clock driver for Allwinner A31 generation PRCM"
+	bool "Clock driver for Allwinner A31 generation PRCM (CCU)"
 	default SUNXI_GEN_SUN6I
 	help
 	  This enables common clock driver support for the PRCM
-	  in Allwinner A31/A31s/A23/A33/A83T/H3/A64/H5 SoCs.
+	  in Allwinner A31/A31s/A23/A33/A83T/H3/A64/H5 SoCs using
+	  the new CCU binding.
 
 config CLK_SUN8I_A23
 	bool "Clock driver for Allwinner A23/A33"

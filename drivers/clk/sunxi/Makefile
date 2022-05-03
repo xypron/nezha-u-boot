@@ -12,6 +12,7 @@ obj-$(CONFIG_CLK_SUNIV_F1C100S) += clk_f1c100s.o
 obj-$(CONFIG_CLK_SUN4I_A10) += clk_a10.o
 obj-$(CONFIG_CLK_SUN5I_A10S) += clk_a10s.o
 obj-$(CONFIG_CLK_SUN6I_A31) += clk_a31.o
+obj-$(CONFIG_CLK_SUN6I_A31_APB0) += clk_a31_apb0.o
 obj-$(CONFIG_CLK_SUN6I_A31_R) += clk_a31_r.o
 obj-$(CONFIG_CLK_SUN8I_A23) += clk_a23.o
 obj-$(CONFIG_CLK_SUN8I_A83T) += clk_a83t.o
