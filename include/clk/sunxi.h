@@ -86,5 +86,6 @@ struct ccu_plat {
 };
 
 extern struct clk_ops sunxi_clk_ops;
+extern struct reset_ops sunxi_reset_ops;
 
 #endif /* _CLK_SUNXI_H */
