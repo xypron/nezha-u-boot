@@ -11,6 +11,7 @@
 
 	aliases {
 		ethernet0 = &rtl8723cs;
+		serial0 = &uart0;
 	};
 
 	panel: panel {
@@ -74,6 +75,10 @@
 		interrupt-parent = <&pio>;
 		interrupts = <7 10 IRQ_TYPE_EDGE_RISING>; /* PH10 / EINT10 */
 	};
+};
+
+&mmc0 {
+	status = "disabled";
 };
 
 &mmc1 {
@@ -155,6 +160,12 @@
 	avdd-supply = <&reg_ldo_io1>;
 	touchscreen-size-x = <1024>;
 	touchscreen-size-y = <600>;
+	status = "okay";
+};
+
+&uart0 {
+	pinctrl-0 = <&uart0_pf_pins>;
+	pinctrl-names = "default";
 	status = "okay";
 };
 
