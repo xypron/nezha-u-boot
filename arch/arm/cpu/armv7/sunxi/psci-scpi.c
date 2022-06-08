@@ -24,7 +24,11 @@
 #define MPIDR_AFFLVL0(mpidr)	(mpidr & 0xf)
 #define MPIDR_AFFLVL1(mpidr)	(mpidr >> 8 & 0xf)
 
+#if defined(CONFIG_MACH_SUN8I_H3)
 #define SCPI_SHMEM_BASE		0x0004be00
+#else
+#define SCPI_SHMEM_BASE		0x00053e00
+#endif
 #define SCPI_SHMEM		((struct scpi_shmem *)SCPI_SHMEM_BASE)
 
 #define SCPI_RX_CHANNEL		1
