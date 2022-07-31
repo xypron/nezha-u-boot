@@ -34,6 +34,15 @@ static int axp_gpio_get_value(struct udevice *dev, unsigned pin)
 	const struct axp_gpio_desc *desc = dev_get_priv(dev);
 	int ret;
 
+	ret = pmic_reg_read(dev->parent, desc->pins[pin]);
+	if (ret < 0)
+		return ret;
+
+	if (ret == AXP_GPIO_CTRL_OUTPUT_LOW)
+		return 0;
+	if (ret == AXP_GPIO_CTRL_OUTPUT_HIGH)
+		return 1;
+
 	ret = pmic_reg_read(dev->parent, desc->status_reg);
 	if (ret < 0)
 		return ret;
