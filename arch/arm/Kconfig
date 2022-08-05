@@ -1121,62 +1121,15 @@ config ARCH_SOCFPGA
 
 config ARCH_SUNXI
 	bool "Support sunxi (Allwinner) SoCs"
-	select BINMAN
 	select BOARD_SUNXI
-	select CMD_GPIO if GPIO
-	select CMD_MMC if MMC
-	select CMD_USB if DISTRO_DEFAULTS && USB_HOST
-	select CLK
-	select DM
-	select DM_GPIO if GPIO
-	select DM_I2C if I2C
-	select DM_SCSI if SCSI
-	select DM_SERIAL if SERIAL
-	select DM_SPI if SPI
-	select DM_SPI_FLASH if SPI
-	select OF_BOARD_SETUP
 	select OF_CONTROL
 	select OF_SEPARATE
-	select PINCTRL
 	select SPECIFY_CONSOLE_INDEX if SERIAL
-	select SPL_SEPARATE_BSS if SPL
 	select SPL_STACK_R if SPL
 	select SPL_SYS_MALLOC_SIMPLE if SPL
 	select SPL_SYS_THUMB_BUILD if !ARM64
-	select SUNXI_GPIO if GPIO
-	select SYS_NS16550 if SERIAL
 	select SYS_THUMB_BUILD if !ARM64
-	select USB if DISTRO_DEFAULTS
-	select USB_KEYBOARD if DISTRO_DEFAULTS && USB_HOST
 	select SPL_USE_TINY_PRINTF
-	select USE_PREBOOT
-	select SYS_RELOC_GD_ENV_ADDR
-	imply BOARD_LATE_INIT
-	imply CMD_DM
-	imply CMD_GPT
-	imply CMD_UBI if MTD_RAW_NAND
-	imply DISTRO_DEFAULTS
-	imply DM_REGULATOR
-	imply DM_REGULATOR_FIXED
-	imply FAT_WRITE
-	imply FIT
-	imply OF_LIBFDT_OVERLAY
-	imply PRE_CONSOLE_BUFFER
-	imply SPL_GPIO
-	imply SPL_LIBCOMMON_SUPPORT
-	imply SPL_LIBGENERIC_SUPPORT
-	imply SPL_MMC if MMC
-	imply SPL_POWER
-	imply SPL_SERIAL
-	imply SYSRESET
-	imply SYSRESET_WATCHDOG
-	imply SYSRESET_WATCHDOG_AUTO
-	imply USB_EHCI_GENERIC
-	imply USB_EHCI_HCD
-	imply USB_GADGET
-	imply USB_OHCI_GENERIC
-	imply USB_OHCI_HCD
-	imply WDT
 
 config ARCH_U8500
 	bool "ST-Ericsson U8500 Series"
