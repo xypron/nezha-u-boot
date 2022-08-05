@@ -1122,6 +1122,7 @@ config ARCH_SOCFPGA
 config ARCH_SUNXI
 	bool "Support sunxi (Allwinner) SoCs"
 	select BINMAN
+	select BOARD_SUNXI
 	select CMD_GPIO if GPIO
 	select CMD_MMC if MMC
 	select CMD_USB if DISTRO_DEFAULTS && USB_HOST
