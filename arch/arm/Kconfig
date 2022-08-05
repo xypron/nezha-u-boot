@@ -1122,28 +1122,28 @@ config ARCH_SOCFPGA
 config ARCH_SUNXI
 	bool "Support sunxi (Allwinner) SoCs"
 	select BINMAN
-	select CMD_GPIO
+	select CMD_GPIO if GPIO
 	select CMD_MMC if MMC
 	select CMD_USB if DISTRO_DEFAULTS && USB_HOST
 	select CLK
 	select DM
-	select DM_GPIO
+	select DM_GPIO if GPIO
 	select DM_I2C if I2C
+	select DM_SCSI if SCSI
+	select DM_SERIAL if SERIAL
 	select DM_SPI if SPI
 	select DM_SPI_FLASH if SPI
-	select DM_SCSI if SCSI
-	select DM_SERIAL
 	select OF_BOARD_SETUP
 	select OF_CONTROL
 	select OF_SEPARATE
 	select PINCTRL
-	select SPECIFY_CONSOLE_INDEX
+	select SPECIFY_CONSOLE_INDEX if SERIAL
 	select SPL_SEPARATE_BSS if SPL
 	select SPL_STACK_R if SPL
 	select SPL_SYS_MALLOC_SIMPLE if SPL
 	select SPL_SYS_THUMB_BUILD if !ARM64
-	select SUNXI_GPIO
-	select SYS_NS16550
+	select SUNXI_GPIO if GPIO
+	select SYS_NS16550 if SERIAL
 	select SYS_THUMB_BUILD if !ARM64
 	select USB if DISTRO_DEFAULTS
 	select USB_KEYBOARD if DISTRO_DEFAULTS && USB_HOST
