@@ -39,6 +39,7 @@ config BOARD_SUNXI
 	imply SPL_POWER
 	imply SPL_SERIAL
 	imply SUNXI_GPIO
+	imply SYS_I2C_MVTWSI
 	imply SYS_NS16550
 	imply SYSRESET
 	imply SYSRESET_WATCHDOG
