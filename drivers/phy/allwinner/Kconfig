@@ -3,7 +3,8 @@
 #
 config PHY_SUN4I_USB
 	bool "Allwinner Sun4I USB PHY driver"
-	depends on ARCH_SUNXI
+	depends on ARCH_SUNXI && !MACH_SUN9I
+	default y
 	select DM_REGULATOR
 	select PHY
 	help
