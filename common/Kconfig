@@ -205,8 +205,6 @@ config PRE_CON_BUF_SZ
 config PRE_CON_BUF_ADDR
 	hex "Address of the pre-console buffer"
 	depends on PRE_CONSOLE_BUFFER
-	default 0x2f000000 if ARCH_SUNXI && MACH_SUN9I
-	default 0x4f000000 if ARCH_SUNXI && !MACH_SUN9I
 	default 0x0f000000 if ROCKCHIP_RK3288
 	default 0x0f200000 if ROCKCHIP_RK3399
 	help

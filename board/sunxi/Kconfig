@@ -56,6 +56,12 @@ if BOARD_SUNXI
 config IDENT_STRING
 	default " Allwinner Technology"
 
+config PRE_CON_BUF_ADDR
+	default 0x81000000 if MACH_SUNIV
+	default 0x2f000000 if MACH_SUN9I
+	default 0x4f000000 if SUNXI_MINIMUM_DRAM_MB >= 256
+	default 0x43000000 if SUNXI_MINIMUM_DRAM_MB >= 64
+
 config SPL_STACK_R_ADDR
 	default 0x81e00000 if MACH_SUNIV
 	default 0x2fe00000 if MACH_SUN9I
