@@ -1,5 +1,6 @@
 choice
 	prompt "SPL Image Type"
+	depends on SPL
 	default SPL_IMAGE_TYPE_SUNXI_EGON
 
 config SPL_IMAGE_TYPE_SUNXI_EGON
