@@ -133,7 +133,6 @@ config SUN50I_GEN_H6
 	select FIT
 	select SPL_LOAD_FIT
 	select MMC_SUNXI_HAS_NEW_MODE
-	select SUPPORT_SPL
 	---help---
 	Select this for sunxi SoCs which have H6 like peripherals, clocks
 	and memory map.
@@ -167,7 +166,6 @@ config MACH_SUNXI_H3_H5
 	select SUNXI_DRAM_DW
 	select SUNXI_DRAM_DW_32BIT
 	select SUNXI_GEN_SUN6I
-	select SUPPORT_SPL
 
 # TODO: try out A80's 8GiB DRAM space
 config SUNXI_DRAM_MAX_SIZE
@@ -184,7 +182,6 @@ config MACH_SUNIV
 	bool "suniv (Allwinner F1C100s/F1C200s/F1C600/R6)"
 	select CPU_ARM926EJS
 	select SUNXI_GEN_SUN6I
-	select SUPPORT_SPL
 	select SKIP_LOWLEVEL_INIT_ONLY
 	select SPL_SKIP_LOWLEVEL_INIT_ONLY
 
@@ -194,7 +191,6 @@ config MACH_SUN4I
 	select PHY_SUN4I_USB
 	select DRAM_SUN4I
 	select SUNXI_GEN_SUN4I
-	select SUPPORT_SPL
 	imply SPL_SYS_I2C_LEGACY
 	imply SYS_I2C_LEGACY
 
@@ -204,7 +200,6 @@ config MACH_SUN5I
 	select DRAM_SUN4I
 	select PHY_SUN4I_USB
 	select SUNXI_GEN_SUN4I
-	select SUPPORT_SPL
 	imply SPL_SYS_I2C_LEGACY
 	imply SYS_I2C_LEGACY
 
@@ -220,7 +215,6 @@ config MACH_SUN6I
 	select SPL_I2C
 	select SUN6I_PRCM
 	select SUNXI_GEN_SUN6I
-	select SUPPORT_SPL
 	select SYS_I2C_SUN6I_P2WI
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
 
@@ -234,7 +228,6 @@ config MACH_SUN7I
 	select DRAM_SUN4I
 	select PHY_SUN4I_USB
 	select SUNXI_GEN_SUN4I
-	select SUPPORT_SPL
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
 	imply SPL_SYS_I2C_LEGACY
 	imply SYS_I2C_LEGACY
@@ -249,7 +242,6 @@ config MACH_SUN8I_A23
 	select PHY_SUN4I_USB
 	select SPL_I2C
 	select SUNXI_GEN_SUN6I
-	select SUPPORT_SPL
 	select SYS_I2C_SUN8I_RSB
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
 
@@ -263,7 +255,6 @@ config MACH_SUN8I_A33
 	select PHY_SUN4I_USB
 	select SPL_I2C
 	select SUNXI_GEN_SUN6I
-	select SUPPORT_SPL
 	select SYS_I2C_SUN8I_RSB
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
 
@@ -276,7 +267,6 @@ config MACH_SUN8I_A83T
 	select SUNXI_GEN_SUN6I
 	select MMC_SUNXI_HAS_NEW_MODE
 	select MMC_SUNXI_HAS_MODE_SWITCH
-	select SUPPORT_SPL
 	select SYS_I2C_SUN8I_RSB
 
 config MACH_SUN8I_H3
@@ -296,7 +286,6 @@ config MACH_SUN8I_R40
 	select ARCH_SUPPORT_PSCI
 	select SUNXI_GEN_SUN6I
 	select MMC_SUNXI_HAS_NEW_MODE
-	select SUPPORT_SPL
 	select SUNXI_DRAM_DW
 	select SUNXI_DRAM_DW_32BIT
 	select PHY_SUN4I_USB
@@ -311,7 +300,6 @@ config MACH_SUN8I_V3S
 	select SUNXI_GEN_SUN6I
 	select SUNXI_DRAM_DW
 	select SUNXI_DRAM_DW_16BIT
-	select SUPPORT_SPL
 	select ARMV7_BOOT_SEC_DEFAULT if OLD_SUNXI_KERNEL_COMPAT
 
 config MACH_SUN9I
@@ -322,7 +310,6 @@ config MACH_SUN9I
 	select SPL_I2C
 	select SUN6I_PRCM
 	select SUNXI_GEN_SUN6I
-	select SUPPORT_SPL
 
 config MACH_SUN50I
 	bool "sun50i (Allwinner A64)"
@@ -332,7 +319,6 @@ config MACH_SUN50I
 	select SUNXI_DE2
 	select SUNXI_GEN_SUN6I
 	select MMC_SUNXI_HAS_NEW_MODE
-	select SUPPORT_SPL
 	select SUNXI_DRAM_DW
 	select SUNXI_DRAM_DW_32BIT
 	select FIT
