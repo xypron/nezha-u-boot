@@ -132,6 +132,11 @@ config SYS_CONFIG_NAME
 	default "sun50i" if MACH_SUN50I_H6
 	default "sun50i" if MACH_SUN50I_H616
 
+config SYS_LOAD_ADDR
+	default 0x81000000 if MACH_SUNIV
+	default 0x22000000 if MACH_SUN9I
+	default 0x42000000
+
 config SYS_SOC
 	default "sunxi"
 
