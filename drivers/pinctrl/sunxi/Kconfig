@@ -89,6 +89,11 @@ config PINCTRL_SUN9I_A80_R
 	default MACH_SUN9I
 	select PINCTRL_SUNXI
 
+config PINCTRL_SUN20I_D1
+	bool "Support for the Allwinner D1/R528 PIO"
+	default MACH_SUN8I_R528 || TARGET_SUN20I_D1
+	select PINCTRL_SUNXI
+
 config PINCTRL_SUN50I_A64
 	bool "Support for the Allwinner A64 PIO"
 	default MACH_SUN50I
@@ -122,11 +127,6 @@ config PINCTRL_SUN50I_H616
 config PINCTRL_SUN50I_H616_R
 	bool "Support for the Allwinner H616 R-PIO"
 	default MACH_SUN50I_H616
-	select PINCTRL_SUNXI
-
-config PINCTRL_SUN20I_D1
-	bool "Support for the Allwinner D1/R528 PIO"
-	default MACH_SUN8I_R528
 	select PINCTRL_SUNXI
 
 endif

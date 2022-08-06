@@ -14,6 +14,15 @@ config BOARD_SUNXI
 	select DM_SPI_FLASH if SPI
 	select OF_BOARD_SETUP
 	select PINCTRL
+	select RAM if SPL_DM
+	select SPL_CLK if SPL_DM
+	select SPL_DM if RISCV && SPL
+	select SPL_DM_SPI if SPL_DM && SPL_SPI
+	select SPL_DM_SPI_FLASH if SPL_DM && SPL_SPI
+	select SPL_OF_CONTROL if SPL_DM
+	select SPL_PINCTRL if SPL_DM
+	select SPL_PINCONF if SPL_DM
+	select SPL_RAM if SPL_DM
 	select SPL_SEPARATE_BSS if SPL
 	select SUPPORT_SPL
 	select SYS_RELOC_GD_ENV_ADDR
@@ -29,6 +38,7 @@ config BOARD_SUNXI
 	imply DM_REGULATOR_FIXED
 	imply FAT_WRITE
 	imply FIT
+	imply MMC
 	imply OF_LIBFDT_OVERLAY
 	imply PRE_CONSOLE_BUFFER
 	imply SPL
@@ -43,6 +53,7 @@ config BOARD_SUNXI
 	imply SYS_I2C_MVTWSI
 	imply SYS_NS16550
 	imply SYSRESET
+	imply SYSRESET_SBI
 	imply SYSRESET_WATCHDOG
 	imply SYSRESET_WATCHDOG_AUTO
 	imply USB_EHCI_GENERIC
@@ -69,6 +80,12 @@ config SPL_BSS_START_ADDR
 	default 0x4ff80000 if SUNXI_MINIMUM_DRAM_MB >= 256
 	default 0x43f80000 if SUNXI_MINIMUM_DRAM_MB >= 64
 
+config SPL_OPENSBI_LOAD_ADDR
+	default 0x40000000 if RISCV
+
+config SPL_STACK
+	default 0x48000 if TARGET_SUN20I_D1
+
 config SPL_STACK_R_ADDR
 	default 0x81e00000 if MACH_SUNIV
 	default 0x2fe00000 if MACH_SUN9I
@@ -89,7 +106,7 @@ config SUNXI_GEN_NCAT2
 config SUNXI_MINIMUM_DRAM_MB
 	int
 	default 32 if MACH_SUNIV
-	default 64 if MACH_SUN8I_V3S
+	default 64 if MACH_SUN8I_V3S || TARGET_SUN20I_D1
 	default 256
 	help
 	  Minimum DRAM size expected on the board. Traditionally we
@@ -122,6 +139,7 @@ config SYS_CLK_FREQ
 	default 1008000000 if MACH_SUN8I
 	default 1008000000 if MACH_SUN8I_R528
 	default 1008000000 if MACH_SUN9I
+	default 1008000000 if TARGET_SUN20I_D1
 	default  816000000 if MACH_SUN50I || MACH_SUN50I_H5
 	default  888000000 if MACH_SUN50I_H6
 	default 1008000000 if MACH_SUN50I_H616
@@ -135,9 +153,13 @@ config SYS_CONFIG_NAME
 	default "sun8i"  if MACH_SUN8I
 	default "sun8i"  if MACH_SUN8I_R528
 	default "sun9i"  if MACH_SUN9I
+	default "sun20i" if TARGET_SUN20I_D1
 	default "sun50i" if MACH_SUN50I
 	default "sun50i" if MACH_SUN50I_H6
 	default "sun50i" if MACH_SUN50I_H616
+
+config SYS_CPU
+	default "thead" if TARGET_SUN20I_D1
 
 config SYS_LOAD_ADDR
 	default 0x81000000 if MACH_SUNIV

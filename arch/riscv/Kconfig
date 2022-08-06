@@ -31,6 +31,15 @@ config TARGET_SIPEED_MAIX
 	bool "Support Sipeed Maix Board"
 	select SYS_CACHE_SHIFT_6
 
+config TARGET_SUN20I_D1
+	bool "Support Allwinner D1 Boards"
+	select BOARD_SUNXI
+	select GENERIC_RISCV
+	select MMC_SUNXI_HAS_NEW_MODE
+	select SUNXI_GEN_NCAT2
+	select SUNXI_NEW_PINCTRL
+	select THEAD_C906
+
 config TARGET_STARFIVE_VISIONFIVE2
 	bool "Support StarFive VisionFive2 Board"
 	select BOARD_LATE_INIT

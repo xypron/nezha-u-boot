@@ -77,6 +77,7 @@ config SPL_SIZE_LIMIT_PROVIDE_STACK
 config SPL_MAX_SIZE
 	hex "Maximum size of the SPL image, excluding BSS"
 	default 0x30000 if ARCH_MX6 && MX6_OCRAM_256KB
+	default 0x27fa0 if TARGET_SUN20I_D1
 	default 0x1b000 if AM33XX && !TI_SECURE_DEVICE
 	default 0x10000 if ARCH_MX6 && !MX6_OCRAM_256KB
 	default 0x7fa0 if SUNXI_SRAM_ADDRESS = 0x10000
