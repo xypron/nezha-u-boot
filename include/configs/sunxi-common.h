@@ -12,7 +12,6 @@
 #ifndef _SUNXI_COMMON_CONFIG_H
 #define _SUNXI_COMMON_CONFIG_H
 
-#include <asm/arch/cpu.h>
 #include <linux/stringify.h>
 
 /* Serial & console */
