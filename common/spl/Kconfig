@@ -78,6 +78,7 @@ config SPL_MAX_SIZE
 	hex "Maximum size of the SPL image, excluding BSS"
 	default 0x37fa0 if MACH_SUN50I_H616
 	default 0x30000 if ARCH_MX6 && MX6_OCRAM_256KB
+	default 0x27fa0 if TARGET_SUN20I_D1
 	default 0x25fa0 if MACH_SUN50I_H6
 	default 0x1b000 if AM33XX && !TI_SECURE_DEVICE
 	default 0x10000 if ARCH_MX6 && !MX6_OCRAM_256KB
