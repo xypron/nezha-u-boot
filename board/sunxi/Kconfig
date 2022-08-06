@@ -53,6 +53,77 @@ config BOARD_SUNXI
 
 if BOARD_SUNXI
 
+config IDENT_STRING
+	default " Allwinner Technology"
+
+config SPL_STACK_R_ADDR
+	default 0x81e00000 if MACH_SUNIV
+	default 0x4fe00000 if MACH_SUN4I
+	default 0x4fe00000 if MACH_SUN5I
+	default 0x4fe00000 if MACH_SUN6I
+	default 0x4fe00000 if MACH_SUN7I
+	default 0x4fe00000 if MACH_SUN8I
+	default 0x2fe00000 if MACH_SUN9I
+	default 0x4fe00000 if MACH_SUN50I
+	default 0x4fe00000 if SUN50I_GEN_H6
+	default 0x4fe00000 if SUNXI_GEN_NCAT2
+
+config SUNXI_MINIMUM_DRAM_MB
+	int "minimum DRAM size"
+	default 32 if MACH_SUNIV
+	default 64 if MACH_SUN8I_V3S
+	default 256
+	help
+	  Minimum DRAM size expected on the board. Traditionally we
+	  assumed 256 MB, so that U-Boot would load at 160MB. With
+	  co-packaged DRAM we have smaller sizes, though, so U-Boot's
+	  own load address and the default payload addresses must be
+	  shifted down. This is expected to be fixed by the SoC
+	  selection.
+
+config SUNXI_SRAM_ADDRESS
+	hex
+	default 0x10000 if MACH_SUN9I || MACH_SUN50I || MACH_SUN50I_H5
+	default 0x20000 if SUN50I_GEN_H6 || SUNXI_GEN_NCAT2
+	default 0x0
+	help
+	  Older Allwinner SoCs have their boot mask ROM mapped just
+	  below 4GB, with the first SRAM region located at address 0.
+	  Newer SoCs map the boot ROM at address 0 instead and move the
+	  SRAM to a different address.
+
+config SYS_BOARD
+	default "sunxi"
+
+config SYS_CLK_FREQ
+	default  408000000 if MACH_SUNIV
+	default 1008000000 if MACH_SUN4I
+	default 1008000000 if MACH_SUN5I
+	default 1008000000 if MACH_SUN6I
+	default  912000000 if MACH_SUN7I
+	default 1008000000 if MACH_SUN8I
+	default 1008000000 if MACH_SUN8I_R528
+	default 1008000000 if MACH_SUN9I
+	default  816000000 if MACH_SUN50I || MACH_SUN50I_H5
+	default  888000000 if MACH_SUN50I_H6
+	default 1008000000 if MACH_SUN50I_H616
+
+config SYS_CONFIG_NAME
+	default "suniv"  if MACH_SUNIV
+	default "sun4i"  if MACH_SUN4I
+	default "sun5i"  if MACH_SUN5I
+	default "sun6i"  if MACH_SUN6I
+	default "sun7i"  if MACH_SUN7I
+	default "sun8i"  if MACH_SUN8I
+	default "sun8i"  if MACH_SUN8I_R528
+	default "sun9i"  if MACH_SUN9I
+	default "sun50i" if MACH_SUN50I
+	default "sun50i" if MACH_SUN50I_H6
+	default "sun50i" if MACH_SUN50I_H616
+
+config SYS_SOC
+	default "sunxi"
+
 menu "sunxi board options"
 
 choice
