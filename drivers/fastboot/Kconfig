@@ -15,7 +15,7 @@ config FASTBOOT
 config USB_FUNCTION_FASTBOOT
 	bool "Enable USB fastboot gadget"
 	depends on USB_GADGET
-	default y if ARCH_SUNXI && USB_MUSB_GADGET
+	default y if BOARD_SUNXI && USB_MUSB_GADGET
 	select FASTBOOT
 	select USB_GADGET_DOWNLOAD
 	help
@@ -46,10 +46,9 @@ if FASTBOOT
 
 config FASTBOOT_BUF_ADDR
 	hex "Define FASTBOOT buffer address"
+	default SYS_LOAD_ADDR if BOARD_SUNXI
 	default 0x82000000 if MX6SX || MX6SL || MX6UL || MX6SLL
 	default 0x81000000 if ARCH_OMAP2PLUS
-	default 0x42000000 if ARCH_SUNXI && !MACH_SUN9I
-	default 0x22000000 if ARCH_SUNXI && MACH_SUN9I
 	default 0x60800800 if ROCKCHIP_RK3036 || ROCKCHIP_RK3188 || \
 				ROCKCHIP_RK322X
 	default 0x800800 if ROCKCHIP_RK3288 || ROCKCHIP_RK3329 || \
@@ -66,7 +65,7 @@ config FASTBOOT_BUF_SIZE
 	hex "Define FASTBOOT buffer size"
 	default 0x8000000 if ARCH_ROCKCHIP
 	default 0x6000000 if ARCH_ZYNQMP
-	default 0x2000000 if ARCH_SUNXI
+	default 0x2000000 if BOARD_SUNXI
 	default 0x8192 if SANDBOX
 	default 0x7000000
 	help
@@ -85,7 +84,7 @@ config FASTBOOT_USB_DEV
 
 config FASTBOOT_FLASH
 	bool "Enable FASTBOOT FLASH command"
-	default y if ARCH_SUNXI || ARCH_ROCKCHIP
+	default y if BOARD_SUNXI || ARCH_ROCKCHIP
 	depends on MMC || (MTD_RAW_NAND && CMD_MTDPARTS)
 	select IMAGE_SPARSE
 	help
@@ -120,8 +119,8 @@ config FASTBOOT_FLASH_MMC_DEV
 	int "Define FASTBOOT MMC FLASH default device"
 	depends on FASTBOOT_FLASH_MMC
 	default 0 if ARCH_ROCKCHIP
-	default 0 if ARCH_SUNXI && MMC_SUNXI_SLOT_EXTRA = -1
-	default 1 if ARCH_SUNXI && MMC_SUNXI_SLOT_EXTRA != -1
+	default 0 if BOARD_SUNXI && MMC_SUNXI_SLOT_EXTRA = -1
+	default 1 if BOARD_SUNXI && MMC_SUNXI_SLOT_EXTRA != -1
 	help
 	  The fastboot "flash" command requires additional information
 	  regarding the non-volatile storage device. Define this to
