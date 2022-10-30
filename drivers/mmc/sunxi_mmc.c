@@ -25,8 +25,12 @@
 #include <asm/io.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/cpu.h>
+#if !CONFIG_IS_ENABLED(DM_MMC)
 #include <asm/arch/mmc.h>
+#endif
 #include <linux/delay.h>
+
+#include "sunxi_mmc.h"
 
 #ifndef CCM_MMC_CTRL_MODE_SEL_NEW
 #define CCM_MMC_CTRL_MODE_SEL_NEW	0
