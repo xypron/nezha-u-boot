@@ -1,0 +1,6 @@
+config RAM_SUNXI
+	bool "Ram drivers support for sunxi SoCs"
+	depends on RAM && BOARD_SUNXI
+	default y
+	help
+	  This enables support for ram drivers of sunxi SoCs.
