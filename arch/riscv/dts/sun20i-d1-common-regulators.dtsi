@@ -18,6 +18,15 @@
 	};
 };
 
+&codec {
+	avcc-supply = <&reg_aldo>;
+	hpvcc-supply = <&reg_hpldo>;
+};
+
+&hdmi {
+	hvcc-supply = <&reg_ldoa>;
+};
+
 &lradc {
 	vref-supply = <&reg_aldo>;
 };
@@ -48,4 +57,8 @@
 	regulator-min-microvolt = <1800000>;
 	regulator-max-microvolt = <1800000>;
 	ldo-in-supply = <&reg_vcc_3v3>;
+};
+
+&ths {
+	vref-supply = <&reg_aldo>;
 };

@@ -59,6 +59,35 @@
 		#clock-cells = <0>;
 	};
 
+	thermal-zones {
+		cpu-thermal {
+			polling-delay = <0>;
+			polling-delay-passive = <0>;
+			thermal-sensors = <&ths>;
+
+			trips {
+				cpu_target: cpu-target {
+					hysteresis = <3000>;
+					temperature = <85000>;
+					type = "passive";
+				};
+
+				cpu-crit {
+					hysteresis = <0>;
+					temperature = <110000>;
+					type = "critical";
+				};
+			};
+
+			cooling-maps {
+				map0 {
+					trip = <&cpu_target>;
+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+				};
+			};
+		};
+	};
+
 	soc {
 		compatible = "simple-bus";
 		ranges;
@@ -95,6 +124,14 @@
 			#interrupt-cells = <3>;
 
 			/omit-if-no-ref/
+			dsi_4lane_pins: dsi-4lane-pins {
+				pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5",
+				       "PD6", "PD7", "PD8", "PD9";
+				drive-strength = <30>;
+				function = "dsi";
+			};
+
+			/omit-if-no-ref/
 			i2c0_pb10_pins: i2c0-pb10-pins {
 				pins = "PB10", "PB11";
 				function = "i2c0";
@@ -113,6 +150,12 @@
 				       "PD12", "PD13", "PD14", "PD15", "PD16", "PD17",
 				       "PD18", "PD19", "PD20", "PD21";
 				function = "lcd0";
+			};
+
+			/omit-if-no-ref/
+			ledc_pc0_pin: ledc-pc0-pin {
+				pins = "PC0";
+				function = "ledc";
 			};
 
 			/omit-if-no-ref/
@@ -149,6 +192,48 @@
 			};
 
 			/omit-if-no-ref/
+			pwm0_pd16_pin: pwm0-pd16-pin {
+				pins = "PD16";
+				function = "pwm0";
+			};
+
+			/omit-if-no-ref/
+			pwm2_pd18_pin: pwm2-pd18-pin {
+				pins = "PD18";
+				function = "pwm2";
+			};
+
+			/omit-if-no-ref/
+			pwm4_pd20_pin: pwm4-pd20-pin {
+				pins = "PD20";
+				function = "pwm4";
+			};
+
+			/omit-if-no-ref/
+			pwm7_pd22_pin: pwm7-pd22-pin {
+				pins = "PD22";
+				function = "pwm7";
+			};
+
+			/omit-if-no-ref/
+			spi0_pins: spi0-pins {
+				pins = "PC2", "PC3", "PC4", "PC5", "PC6", "PC7";
+				function = "spi0";
+			};
+
+			/omit-if-no-ref/
+			spi1_pb_pins: spi1-pb-pins {
+				pins = "PB0", "PB8", "PB9", "PB10", "PB11", "PB12";
+				function = "spi1";
+			};
+
+			/omit-if-no-ref/
+			spi1_pd_pins: spi1-pd-pins {
+				pins = "PD10", "PD11", "PD12", "PD13", "PD14", "PD15";
+				function = "spi1";
+			};
+
+			/omit-if-no-ref/
 			uart0_pb8_pins: uart0-pb8-pins {
 				pins = "PB8", "PB9";
 				function = "uart0";
@@ -167,6 +252,17 @@
 			};
 		};
 
+		pwm: pwm@2000c00 {
+			compatible = "allwinner,sun20i-d1-pwm";
+			reg = <0x2000c00 0x400>;
+			interrupts = <34 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_PWM>, <&osc24M>;
+			clock-names = "bus", "mod";
+			resets = <&ccu RST_BUS_PWM>;
+			status = "disabled";
+			#pwm-cells = <3>;
+		};
+
 		ccu: clock-controller@2001000 {
 			compatible = "allwinner,sun20i-d1-ccu";
 			reg = <0x2001000 0x1000>;
@@ -176,6 +272,33 @@
 			clock-names = "hosc", "losc", "iosc";
 			#clock-cells = <1>;
 			#reset-cells = <1>;
+		};
+
+		ledc: led-controller@2008000 {
+			compatible = "allwinner,sun20i-d1-ledc",
+				     "allwinner,sun50i-a100-ledc";
+			reg = <0x2008000 0x400>;
+			interrupts = <36 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_LEDC>, <&ccu CLK_LEDC>;
+			clock-names = "bus", "mod";
+			resets = <&ccu RST_BUS_LEDC>;
+			dmas = <&dma 42>;
+			dma-names = "tx";
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		ths: temperature-sensor@2009400 {
+			compatible = "allwinner,sun20i-d1-ths";
+			reg = <0x2009400 0x400>;
+			interrupts = <74 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_THS>, <&osc24M>;
+			clock-names = "bus", "mod";
+			resets = <&ccu RST_BUS_THS>;
+			nvmem-cells = <&ths_calib>;
+			nvmem-cell-names = "calibration";
+			#thermal-sensor-cells = <0>;
 		};
 
 		lradc: keys@2009800 {
@@ -188,11 +311,30 @@
 			status = "disabled";
 		};
 
+		iommu: iommu@2010000 {
+			compatible = "allwinner,sun20i-d1-iommu";
+			reg = <0x2010000 0x10000>;
+			interrupts = <80 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_IOMMU>;
+			#iommu-cells = <1>;
+		};
+
 		codec: audio-codec@2030000 {
-			compatible = "simple-mfd", "syscon";
+			compatible = "allwinner,sun20i-d1-codec", "simple-mfd", "syscon";
 			reg = <0x2030000 0x1000>;
+			interrupts = <41 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_AUDIO>,
+				 <&ccu CLK_AUDIO_ADC>,
+				 <&ccu CLK_AUDIO_DAC>,
+				 <&osc24M>,
+				 <&rtc CLK_OSC32K>;
+			clock-names = "bus", "adc", "dac", "hosc", "losc";
+			resets = <&ccu RST_BUS_AUDIO>;
+			dmas = <&dma 7>, <&dma 7>;
+			dma-names = "rx", "tx";
 			#address-cells = <1>;
 			#size-cells = <1>;
+			#sound-dai-cells = <0>;
 
 			regulators@2030348 {
 				compatible = "allwinner,sun20i-d1-analog-ldos";
@@ -206,6 +348,21 @@
 				reg_hpldo: hpldo {
 				};
 			};
+		};
+
+		dmic: dmic@2031000 {
+			compatible = "allwinner,sun20i-d1-dmic",
+				     "allwinner,sun50i-h6-dmic";
+			reg = <0x2031000 0x400>;
+			interrupts = <40 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_DMIC>,
+				 <&ccu CLK_DMIC>;
+			clock-names = "bus", "mod";
+			resets = <&ccu RST_BUS_DMIC>;
+			dmas = <&dma 8>;
+			dma-names = "rx";
+			status = "disabled";
+			#sound-dai-cells = <0>;
 		};
 
 		i2s0: i2s@2032000 {
@@ -238,6 +395,7 @@
 			#sound-dai-cells = <0>;
 		};
 
+		// TODO: how to integrate ASRC? same or separate node?
 		i2s2: i2s@2034000 {
 			compatible = "allwinner,sun20i-d1-i2s",
 				     "allwinner,sun50i-r329-i2s";
@@ -248,6 +406,22 @@
 			clock-names = "apb", "mod";
 			resets = <&ccu RST_BUS_I2S2>;
 			dmas = <&dma 5>, <&dma 5>;
+			dma-names = "rx", "tx";
+			status = "disabled";
+			#sound-dai-cells = <0>;
+		};
+
+		// TODO: add receive functionality
+		spdif: spdif@2036000 {
+			compatible = "allwinner,sun20i-d1-spdif";
+			reg = <0x2036000 0x400>;
+			interrupts = <39 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_SPDIF>,
+				 <&ccu CLK_SPDIF_RX>,
+				 <&ccu CLK_SPDIF_TX>;
+			clock-names = "apb", "rx", "tx";
+			resets = <&ccu RST_BUS_SPDIF>;
+			dmas = <&dma 2>, <&dma 2>;
 			dma-names = "rx", "tx";
 			status = "disabled";
 			#sound-dai-cells = <0>;
@@ -457,6 +631,18 @@
 			};
 		};
 
+		crypto: crypto@3040000 {
+			compatible = "allwinner,sun20i-d1-crypto";
+			reg = <0x3040000 0x800>;
+			interrupts = <68 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_CE>,
+				 <&ccu CLK_CE>,
+				 <&ccu CLK_MBUS_CE>,
+				 <&rtc CLK_IOSC>;
+			clock-names = "bus", "mod", "ram", "trng";
+			resets = <&ccu RST_BUS_CE>;
+		};
+
 		mbus: dram-controller@3102000 {
 			compatible = "allwinner,sun20i-d1-mbus";
 			reg = <0x3102000 0x1000>,
@@ -520,6 +706,39 @@
 			mmc-ddr-3_3v;
 			no-sd;
 			no-sdio;
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		spi0: spi@4025000 {
+			compatible = "allwinner,sun20i-d1-spi",
+				     "allwinner,sun50i-r329-spi";
+			reg = <0x4025000 0x1000>;
+			interrupts = <31 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_SPI0>, <&ccu CLK_SPI0>;
+			clock-names = "ahb", "mod";
+			resets = <&ccu RST_BUS_SPI0>;
+			dmas = <&dma 22>, <&dma 22>;
+			dma-names = "rx", "tx";
+			num-cs = <1>;
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
+		spi1: spi@4026000 {
+			compatible = "allwinner,sun20i-d1-spi-dbi",
+				     "allwinner,sun50i-r329-spi-dbi",
+				     "allwinner,sun50i-r329-spi";
+			reg = <0x4026000 0x1000>;
+			interrupts = <32 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_SPI1>, <&ccu CLK_SPI1>;
+			clock-names = "ahb", "mod";
+			resets = <&ccu RST_BUS_SPI1>;
+			dmas = <&dma 23>, <&dma 23>;
+			dma-names = "rx", "tx";
+			num-cs = <1>;
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -653,6 +872,7 @@
 				 <&display_clocks CLK_MIXER0>;
 			clock-names = "bus", "mod";
 			resets = <&display_clocks RST_MIXER0>;
+			iommus = <&iommu 2>;
 
 			ports {
 				#address-cells = <1>;
@@ -675,6 +895,7 @@
 				 <&display_clocks CLK_MIXER1>;
 			clock-names = "bus", "mod";
 			resets = <&display_clocks RST_MIXER1>;
+			iommus = <&iommu 2>;
 
 			ports {
 				#address-cells = <1>;
@@ -688,6 +909,40 @@
 					};
 				};
 			};
+		};
+
+		dsi: dsi@5450000 {
+			compatible = "allwinner,sun20i-d1-mipi-dsi",
+				     "allwinner,sun50i-a100-mipi-dsi";
+			reg = <0x5450000 0x1000>;
+			interrupts = <108 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_MIPI_DSI>,
+				 <&tcon_top CLK_TCON_TOP_DSI>;
+			clock-names = "bus", "mod";
+			resets = <&ccu RST_BUS_MIPI_DSI>;
+			phys = <&dphy>;
+			phy-names = "dphy";
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port {
+				dsi_in_tcon_lcd0: endpoint {
+					remote-endpoint = <&tcon_lcd0_out_dsi>;
+				};
+			};
+		};
+
+		dphy: phy@5451000 {
+			compatible = "allwinner,sun20i-d1-mipi-dphy",
+				     "allwinner,sun50i-a100-mipi-dphy";
+			reg = <0x5451000 0x1000>;
+			interrupts = <108 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_MIPI_DSI>,
+				 <&ccu CLK_MIPI_DSI>;
+			clock-names = "bus", "mod";
+			resets = <&ccu RST_BUS_MIPI_DSI>;
+			#phy-cells = <0>;
 		};
 
 		tcon_top: tcon-top@5460000 {
@@ -770,6 +1025,10 @@
 
 				tcon_top_hdmi_out: port@5 {
 					reg = <5>;
+
+					tcon_top_hdmi_out_hdmi: endpoint {
+						remote-endpoint = <&hdmi_in_tcon_top>;
+					};
 				};
 			};
 		};
@@ -785,6 +1044,8 @@
 			resets = <&ccu RST_BUS_TCON_LCD0>,
 				 <&ccu RST_BUS_LVDS0>;
 			reset-names = "lcd", "lvds";
+			phys = <&dphy>;
+			phy-names = "lvds0";
 			#clock-cells = <0>;
 
 			ports {
@@ -809,6 +1070,13 @@
 
 				tcon_lcd0_out: port@1 {
 					reg = <1>;
+					#address-cells = <1>;
+					#size-cells = <0>;
+
+					tcon_lcd0_out_dsi: endpoint@1 {
+						reg = <1>;
+						remote-endpoint = <&dsi_in_tcon_lcd0>;
+					};
 				};
 			};
 		};
@@ -851,6 +1119,50 @@
 					};
 				};
 			};
+		};
+
+		hdmi: hdmi@5500000 {
+			compatible = "allwinner,sun20i-d1-dw-hdmi";
+			reg = <0x5500000 0x10000>;
+			reg-io-width = <1>;
+			interrupts = <109 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu CLK_BUS_HDMI>,
+				 <&ccu CLK_HDMI_24M>,
+				 <&ccu CLK_HDMI_CEC>;
+			clock-names = "iahb", "isfr", "cec";
+			resets = <&ccu RST_BUS_HDMI_SUB>;
+			reset-names = "ctrl";
+			phys = <&hdmi_phy>;
+			phy-names = "phy";
+			status = "disabled";
+
+			ports {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				port@0 {
+					reg = <0>;
+
+					hdmi_in_tcon_top: endpoint {
+						remote-endpoint = <&tcon_top_hdmi_out_hdmi>;
+					};
+				};
+
+				hdmi_out: port@1 {
+					reg = <1>;
+				};
+			};
+		};
+
+		hdmi_phy: phy@5510000 {
+			compatible = "allwinner,sun20i-d1-hdmi-phy";
+			reg = <0x5510000 0x10000>;
+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_24M>;
+			clock-names = "bus", "mod";
+			resets = <&ccu RST_BUS_HDMI_MAIN>;
+			reset-names = "phy";
+			status = "disabled";
+			#phy-cells = <0>;
 		};
 
 		riscv_wdt: watchdog@6011000 {
