@@ -198,6 +198,12 @@ static int sun4i_usb_phy_power_on(struct phy *phy)
 		initial_usb_scan_delay = 0;
 	}
 
+	/* For phy0 only turn on Vbus if we don't have an ext. Vbus */
+	if (phy->id == 0 && sun4i_usb_phy_vbus_detect(phy)) {
+		dev_warn(phy->dev, "External vbus detected, not enabling our own vbus\n");
+		return 0;
+	}
+
 	if (usb_phy->vbus) {
 		ret = regulator_set_enable(usb_phy->vbus, true);
 		if (ret && ret != -ENOSYS)
