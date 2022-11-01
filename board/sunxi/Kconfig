@@ -67,7 +67,7 @@ config SPL_STACK_R_ADDR
 	default 0x4fe00000 if SUN50I_GEN_H6
 
 config SUNXI_MINIMUM_DRAM_MB
-	int "minimum DRAM size"
+	int
 	default 32 if MACH_SUNIV
 	default 64 if MACH_SUN8I_V3S
 	default 256
