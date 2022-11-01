@@ -4,6 +4,7 @@
 /dts-v1/;
 
 #include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/leds/common.h>
 
 #include "sun20i-d1.dtsi"
 #include "sun20i-d1-common-regulators.dtsi"
@@ -20,6 +21,28 @@
 
 	chosen {
 		stdout-path = "serial0:115200n8";
+	};
+
+	hdmi_connector: connector {
+		compatible = "hdmi-connector";
+		type = "c";
+
+		port {
+			hdmi_connector_in: endpoint {
+				remote-endpoint = <&hdmi_out_connector>;
+			};
+		};
+	};
+
+	leds {
+		compatible = "pwm-leds";
+
+		led {
+			color = <LED_COLOR_ID_BLUE>;
+			function = LED_FUNCTION_STATUS;
+			max-brightness = <255>;
+			pwms = <&pwm 2 50000 0>;
+		};
 	};
 
 	reg_avdd2v8: avdd2v8 {
@@ -56,7 +79,25 @@
 	cpu-supply = <&reg_vdd_cpu>;
 };
 
+&de {
+	status = "okay";
+};
+
 &ehci1 {
+	status = "okay";
+};
+
+&hdmi {
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_connector: endpoint {
+		remote-endpoint = <&hdmi_connector_in>;
+	};
+};
+
+&hdmi_phy {
 	status = "okay";
 };
 

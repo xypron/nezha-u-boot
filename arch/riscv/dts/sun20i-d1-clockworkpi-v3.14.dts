@@ -22,16 +22,78 @@
 		stdout-path = "serial0:115200n8";
 	};
 
+	audio_amplifier: audio-amplifier {
+		compatible = "simple-audio-amplifier";
+		enable-gpios = <&pio 4 1 GPIO_ACTIVE_HIGH>; /* PE1/GPIO11 */
+		sound-name-prefix = "Amplifier";
+		VCC-supply = <&reg_vcc>;
+	};
+
+	/*
+	 * FIXME: This is not really an amplifier, but the amplifier binding
+	 * has the needed properties and behavior.
+	 */
+	audio_switch: audio-switch {
+		compatible = "simple-audio-amplifier";
+		enable-gpios = <&pio 1 2 GPIO_ACTIVE_HIGH>; /* PB2/AUD_SWITCH */
+		sound-name-prefix = "Switch";
+		VCC-supply = <&reg_aldo1>;
+	};
+
+	backlight: backlight {
+		compatible = "pwm-backlight";
+		power-supply = <&reg_vcc>;
+		pwms = <&pwm 4 50000 0>; /* PD20/GPIO9 */
+	};
+
+	bt_sco_codec: bt-sco-codec {
+		#sound-dai-cells = <0>;
+		compatible = "linux,bt-sco";
+	};
+
+	bt-sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "Bluetooth";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		simple-audio-card,dai-link@0 {
+			format = "dsp_a";
+			frame-master = <&bt_sound_cpu>;
+			bitclock-master = <&bt_sound_cpu>;
+
+			bt_sound_cpu: cpu {
+				sound-dai = <&i2s1>;
+			};
+
+			codec {
+				sound-dai = <&bt_sco_codec>;
+			};
+		};
+	};
+
+	hdmi_connector: connector {
+		compatible = "hdmi-connector";
+		type = "d";
+
+		port {
+			hdmi_connector_in: endpoint {
+				remote-endpoint = <&hdmi_out_connector>;
+			};
+		};
+	};
+
 	/*
 	 * This regulator is PWM-controlled, but the PWM controller is not
 	 * yet supported, so fix the regulator to its default voltage.
 	 */
 	reg_vdd_cpu: vdd-cpu {
-		compatible = "regulator-fixed";
+		compatible = "pwm-regulator";
+		pwms = <&pwm 0 50000 0>;
+		pwm-supply = <&reg_vcc>;
 		regulator-name = "vdd-cpu";
-		regulator-min-microvolt = <1100000>;
-		regulator-max-microvolt = <1100000>;
-		vin-supply = <&reg_vcc>;
+		regulator-min-microvolt = <810000>;
+		regulator-max-microvolt = <1160000>;
 	};
 
 	wifi_pwrseq: wifi-pwrseq {
@@ -40,11 +102,48 @@
 	};
 };
 
+&codec {
+	aux-devs = <&audio_amplifier>, <&audio_switch>;
+	hp-det-gpio = <&pio 1 12 GPIO_ACTIVE_HIGH>; /* PB12/GPIO10 */
+	pin-switches = "Internal Speakers";
+	routing = "Internal Speakers", "Amplifier OUTL",
+		  "Internal Speakers", "Amplifier OUTR",
+		  "Amplifier INL", "Switch OUTL",
+		  "Amplifier INR", "Switch OUTR",
+		  "Headphone Jack", "Switch OUTL",
+		  "Headphone Jack", "Switch OUTR",
+		  "Switch INL", "HPOUTL",
+		  "Switch INR", "HPOUTR",
+		  "MICIN3", "Headset Microphone",
+		  "Headset Microphone", "HBIAS";
+	widgets = "Microphone", "Headset Microphone",
+		  "Headphone", "Headphone Jack",
+		  "Speaker", "Internal Speakers";
+};
+
 &cpu0 {
 	cpu-supply = <&reg_vdd_cpu>;
 };
 
+&de {
+	status = "okay";
+};
+
 &ehci1 {
+	status = "okay";
+};
+
+&hdmi {
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_connector: endpoint {
+		remote-endpoint = <&hdmi_connector_in>;
+	};
+};
+
+&hdmi_phy {
 	status = "okay";
 };
 
@@ -169,6 +268,12 @@
 	};
 };
 
+&i2s1 {
+	pinctrl-0 = <&i2s1_clk_pins>, <&i2s1_din_pin>, <&i2s1_dout_pin>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
 &mmc0 {
 	broken-cd;
 	bus-width = <4>;
@@ -205,6 +310,27 @@
 
 &pio {
 	vcc-pg-supply = <&reg_ldoa>;
+
+	i2s1_clk_pins: i2s1-clk-pins {
+		pins = "PG12", "PG13";
+		function = "i2s1";
+	};
+
+	i2s1_din_pin: i2s1-din-pin {
+		pins = "PG14";
+		function = "i2s1_din";
+	};
+
+	i2s1_dout_pin: i2s1-dout-pin {
+		pins = "PG15";
+		function = "i2s1_dout";
+	};
+};
+
+&pwm {
+	pinctrl-0 = <&pwm0_pd16_pin>, <&pwm4_pd20_pin>;
+	pinctrl-names = "default";
+	status = "okay";
 };
 
 &uart0 {
