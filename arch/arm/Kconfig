@@ -1143,6 +1143,7 @@ config ARCH_SUNXI
 	select SPL_SYS_THUMB_BUILD if !ARM64
 	select SYS_THUMB_BUILD if !ARM64
 	select SPL_USE_TINY_PRINTF
+	imply SPL_LOAD_FIT
 
 config ARCH_U8500
 	bool "ST-Ericsson U8500 Series"
