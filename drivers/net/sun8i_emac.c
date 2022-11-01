@@ -162,7 +162,7 @@ struct emac_eth_dev {
 
 	enum emac_variant variant;
 	void *mac_reg;
-	phys_addr_t sysctl_reg;
+	void *sysctl_reg;
 	struct phy_device *phydev;
 	struct mii_dev *bus;
 	struct clk tx_clk;
@@ -317,18 +317,7 @@ static int sun8i_emac_set_syscon(struct sun8i_eth_pdata *pdata,
 {
 	u32 reg;
 
-	if (priv->variant == R40_GMAC) {
-		/* Select RGMII for R40 */
-		reg = readl(priv->sysctl_reg + 0x164);
-		reg |= SC_ETCS_INT_GMII |
-		       SC_EPIT |
-		       (CONFIG_GMAC_TX_DELAY << SC_ETXDC_OFFSET);
-
-		writel(reg, priv->sysctl_reg + 0x164);
-		return 0;
-	}
-
-	reg = readl(priv->sysctl_reg + 0x30);
+	reg = readl(priv->sysctl_reg);
 
 	reg = sun8i_emac_set_syscon_ephy(priv, reg);
 
@@ -369,7 +358,7 @@ static int sun8i_emac_set_syscon(struct sun8i_eth_pdata *pdata,
 		reg |= ((pdata->rx_delay_ps / 100) << SC_ERXDC_OFFSET)
 			 & SC_ERXDC_MASK;
 
-	writel(reg, priv->sysctl_reg + 0x30);
+	writel(reg, priv->sysctl_reg);
 
 	return 0;
 }
@@ -792,6 +781,7 @@ static int sun8i_emac_eth_of_to_plat(struct udevice *dev)
 	struct sun8i_eth_pdata *sun8i_pdata = dev_get_plat(dev);
 	struct eth_pdata *pdata = &sun8i_pdata->eth_pdata;
 	struct emac_eth_dev *priv = dev_get_priv(dev);
+	phys_addr_t syscon_base;
 	const fdt32_t *reg;
 	int node = dev_of_offset(dev);
 	int offset = 0;
@@ -837,12 +827,17 @@ static int sun8i_emac_eth_of_to_plat(struct udevice *dev)
 		      __func__);
 		return -EINVAL;
 	}
-	priv->sysctl_reg = fdt_translate_address((void *)gd->fdt_blob,
-						 offset, reg);
-	if (priv->sysctl_reg == FDT_ADDR_T_NONE) {
+
+	syscon_base = fdt_translate_address((void *)gd->fdt_blob, offset, reg);
+	if (syscon_base == FDT_ADDR_T_NONE) {
 		debug("%s: Cannot find syscon base address\n", __func__);
 		return -EINVAL;
 	}
+
+	if (priv->variant == R40_GMAC)
+		priv->sysctl_reg = (void *)syscon_base + 0x164;
+	else
+		priv->sysctl_reg = (void *)syscon_base + 0x30;
 
 	pdata->phy_interface = -1;
 	priv->phyaddr = -1;
