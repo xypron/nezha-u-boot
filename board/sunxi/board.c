@@ -19,6 +19,7 @@
 #include <init.h>
 #include <log.h>
 #include <mmc.h>
+#include <remoteproc.h>
 #include <axp_pmic.h>
 #include <generic-phy.h>
 #include <phy-sun4i-usb.h>
@@ -863,6 +864,13 @@ int board_late_init(void)
 {
 #ifdef CONFIG_USB_ETHER
 	usb_ether_init();
+#endif
+
+#ifdef CONFIG_REMOTEPROC_SUN6I_AR100
+	if (!rproc_load(0, SUNXI_SCP_BASE, SUNXI_SCP_MAX_SIZE)) {
+		puts("Starting SCP...\n");
+		rproc_start(0);
+	}
 #endif
 
 	return 0;
