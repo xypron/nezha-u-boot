@@ -72,6 +72,7 @@ struct ccu_desc {
 	const struct ccu_reset *resets;
 	u8 num_gates;
 	u8 num_resets;
+	void (*init)(struct udevice *dev);
 };
 
 /**

@@ -6,7 +6,7 @@
 #include <common.h>
 #include <clk-uclass.h>
 #include <dm.h>
-#include <errno.h>
+#include <asm/io.h>
 #include <clk/sunxi.h>
 #include <dt-bindings/clock/sun20i-d1-ccu.h>
 #include <dt-bindings/reset/sun20i-d1-ccu.h>
@@ -76,9 +76,18 @@ static struct ccu_reset d1_resets[] = {
 	[RST_BUS_LRADC]		= RESET(0xa9c, BIT(16)),
 };
 
+static void d1_ccu_init(struct udevice *dev)
+{
+	struct ccu_plat *plat = dev_get_plat(dev);
+
+	/* Set PLL_CPUX to 1008 MHz. */
+	clrsetbits_le32(plat->base + 0x000, 0xff << 8, 0x29 << 8);
+}
+
 const struct ccu_desc d1_ccu_desc = {
 	.gates	= d1_gates,
 	.resets	= d1_resets,
 	.num_gates = ARRAY_SIZE(d1_gates),
 	.num_resets = ARRAY_SIZE(d1_resets),
+	.init = d1_ccu_init,
 };
