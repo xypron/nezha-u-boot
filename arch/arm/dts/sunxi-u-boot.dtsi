@@ -1,5 +1,11 @@
 #include <config.h>
 
+#ifdef CONFIG_ARM64
+#define ARCH "arm64"
+#else
+#define ARCH "arm"
+#endif
+
 / {
 	aliases {
 		mmc0 = &mmc0;
@@ -34,30 +40,32 @@
 			filename = "spl/sunxi-spl.bin";
 		};
 
-#ifdef CONFIG_ARM64
+#ifdef CONFIG_SPL_LOAD_FIT
 		fit {
-			description = "Configuration to load ATF before U-Boot";
+			description = "Configuration to load U-Boot and firmware";
 			#address-cells = <1>;
 			fit,fdt-list = "of-list";
 
 			images {
 				uboot {
-					description = "U-Boot (64-bit)";
+					description = "U-Boot";
 					type = "standalone";
 					os = "u-boot";
-					arch = "arm64";
+					arch = ARCH;
 					compression = "none";
 					load = <CONFIG_TEXT_BASE>;
+					entry = <CONFIG_TEXT_BASE>;
 
 					u-boot-nodtb {
 					};
 				};
 
+#if CONFIG_SUNXI_BL31_BASE
 				atf {
 					description = "ARM Trusted Firmware";
 					type = "firmware";
 					os = "arm-trusted-firmware";
-					arch = "arm64";
+					arch = ARCH;
 					compression = "none";
 					load = <CONFIG_SUNXI_BL31_BASE>;
 					entry = <CONFIG_SUNXI_BL31_BASE>;
@@ -67,6 +75,7 @@
 						missing-msg = "atf-bl31-sunxi";
 					};
 				};
+#endif
 
 #if CONFIG_SUNXI_SCP_BASE
 				scp {
@@ -95,7 +104,11 @@
 
 				@config-SEQ {
 					description = "NAME";
+#if CONFIG_SUNXI_BL31_BASE
 					firmware = "atf";
+#else
+					firmware = "uboot";
+#endif
 #if CONFIG_SUNXI_SCP_BASE
 					loadables = "scp", "uboot";
 #else
