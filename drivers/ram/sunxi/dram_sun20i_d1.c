@@ -12,7 +12,23 @@
  * [1] https://github.com/szemzoa/awboot.git
  */
 
+#ifndef CONFIG_DRAM_CLK
+#define CONFIG_DRAM_CLK 792
+#endif
+
+#ifndef CONFIG_DRAM_ZQ
+#define CONFIG_DRAM_ZQ 0x007b7bfb
+#endif
+
+#define readl rv_readl
+#define writel rv_writel
 #include <asm/io.h>
+#undef readl
+#undef writel
+
+#define readl(x)       rv_readl((const volatile void __iomem *)(u64)(x))
+#define writel(v, x)   rv_writel(v, (volatile void __iomem *)(u64)(x))
+
 #include <common.h>
 #ifdef CONFIG_RAM
   #include <dm.h>
