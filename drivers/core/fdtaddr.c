@@ -23,7 +23,7 @@ fdt_addr_t devfdt_get_addr_index(const struct udevice *dev, int index)
 {
 #if CONFIG_IS_ENABLED(OF_REAL)
 	int offset = dev_of_offset(dev);
-	int parent = dev_of_offset(dev->parent);
+	int parent = fdt_parent_offset(gd->fdt_blob, offset);
 	fdt_addr_t addr;
 
 	if (CONFIG_IS_ENABLED(OF_TRANSLATE)) {
@@ -44,7 +44,7 @@ fdt_addr_t devfdt_get_addr_index(const struct udevice *dev, int index)
 		}
 
 		reg = fdt_getprop(gd->fdt_blob, offset, "reg", &len);
-		if (!reg || (len <= (index * sizeof(fdt32_t) * (na + ns)))) {
+		if (!reg || (len < ((index + 1) * sizeof(fdt32_t) * (na + ns)))) {
 			debug("Req index out of range\n");
 			return FDT_ADDR_T_NONE;
 		}
