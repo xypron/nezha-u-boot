@@ -221,10 +221,6 @@ int board_init(void)
 	}
 #endif /* !CONFIG_ARM64 && !CONFIG_MACH_SUNIV */
 
-	ret = axp_gpio_init();
-	if (ret)
-		return ret;
-
 #if CONFIG_IS_ENABLED(DM_I2C)
 	/*
 	 * Temporary workaround for enabling I2C clocks until proper sunxi DM

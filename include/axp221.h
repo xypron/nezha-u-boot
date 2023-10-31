@@ -44,24 +44,17 @@
 #define AXP221_ALDO3_CTRL	0x2a
 #define AXP221_SHUTDOWN		0x32
 #define AXP221_SHUTDOWN_POWEROFF	(1 << 7)
+#define AXP221_GPIO0_CTRL	0x90
+#define AXP221_GPIO1_CTRL	0x92
+#define AXP221_GPIO_CTRL_OUTPUT_LOW	0x00
+#define AXP221_GPIO_CTRL_OUTPUT_HIGH	0x01
+#define AXP221_GPIO_CTRL_INPUT		0x02
 #define AXP221_PAGE		0xff
 
 /* Page 1 addresses */
 #define AXP221_SID		0x20
 
-/* For axp_gpio.c */
 #ifdef CONFIG_AXP221_POWER
 #define AXP_POWER_STATUS		0x00
 #define AXP_POWER_STATUS_ALDO_IN		BIT(0)
-#define AXP_VBUS_IPSOUT			0x30
-#define AXP_VBUS_IPSOUT_DRIVEBUS		(1 << 2)
-#define AXP_MISC_CTRL			0x8f
-#define AXP_MISC_CTRL_N_VBUSEN_FUNC		(1 << 4)
-#define AXP_GPIO0_CTRL			0x90
-#define AXP_GPIO1_CTRL			0x92
-#define AXP_GPIO_CTRL_OUTPUT_LOW		0x00 /* Drive pin low */
-#define AXP_GPIO_CTRL_OUTPUT_HIGH		0x01 /* Drive pin high */
-#define AXP_GPIO_CTRL_INPUT			0x02 /* Input */
-#define AXP_GPIO_STATE			0x94
-#define AXP_GPIO_STATE_OFFSET			0
 #endif

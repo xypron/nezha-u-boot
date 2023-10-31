@@ -86,41 +86,12 @@ struct sun4i_usb_phy_cfg {
 	int missing_phys;
 };
 
-struct sun4i_usb_phy_info {
-	const char *gpio_vbus;
-	const char *gpio_vbus_det;
-	const char *gpio_id_det;
-} phy_info[] = {
-	{
-		.gpio_vbus = CONFIG_USB0_VBUS_PIN,
-		.gpio_vbus_det = CONFIG_USB0_VBUS_DET,
-		.gpio_id_det = CONFIG_USB0_ID_DET,
-	},
-	{
-		.gpio_vbus = CONFIG_USB1_VBUS_PIN,
-		.gpio_vbus_det = NULL,
-		.gpio_id_det = NULL,
-	},
-	{
-		.gpio_vbus = CONFIG_USB2_VBUS_PIN,
-		.gpio_vbus_det = NULL,
-		.gpio_id_det = NULL,
-	},
-	{
-		.gpio_vbus = CONFIG_USB3_VBUS_PIN,
-		.gpio_vbus_det = NULL,
-		.gpio_id_det = NULL,
-	},
-};
-
 struct sun4i_usb_phy_plat {
 	void __iomem *pmu;
-	struct gpio_desc gpio_vbus;
-	struct gpio_desc gpio_vbus_det;
-	struct gpio_desc gpio_id_det;
 	struct clk clocks;
 	struct clk clk2;
 	struct reset_ctl resets;
+	struct udevice *vbus;
 	int id;
 };
 
@@ -128,6 +99,8 @@ struct sun4i_usb_phy_data {
 	void __iomem *base;
 	const struct sun4i_usb_phy_cfg *cfg;
 	struct sun4i_usb_phy_plat *usb_phy;
+	struct gpio_desc id_det_gpio;
+	struct gpio_desc vbus_det_gpio;
 	struct udevice *vbus_power_supply;
 };
 
@@ -209,6 +182,7 @@ static int sun4i_usb_phy_power_on(struct phy *phy)
 {
 	struct sun4i_usb_phy_data *data = dev_get_priv(phy->dev);
 	struct sun4i_usb_phy_plat *usb_phy = &data->usb_phy[phy->id];
+	int ret;
 
 	if (initial_usb_scan_delay) {
 		mdelay(initial_usb_scan_delay);
@@ -221,8 +195,11 @@ static int sun4i_usb_phy_power_on(struct phy *phy)
 		return 0;
 	}
 
-	if (dm_gpio_is_valid(&usb_phy->gpio_vbus))
-		dm_gpio_set_value(&usb_phy->gpio_vbus, 1);
+	if (usb_phy->vbus) {
+		ret = regulator_set_enable(usb_phy->vbus, true);
+		if (ret && ret != -ENOSYS)
+			return ret;
+	}
 
 	return 0;
 }
@@ -231,9 +208,13 @@ static int sun4i_usb_phy_power_off(struct phy *phy)
 {
 	struct sun4i_usb_phy_data *data = dev_get_priv(phy->dev);
 	struct sun4i_usb_phy_plat *usb_phy = &data->usb_phy[phy->id];
+	int ret;
 
-	if (dm_gpio_is_valid(&usb_phy->gpio_vbus))
-		dm_gpio_set_value(&usb_phy->gpio_vbus, 0);
+	if (usb_phy->vbus) {
+		ret = regulator_set_enable(usb_phy->vbus, false);
+		if (ret && ret != -ENOSYS)
+			return ret;
+	}
 
 	return 0;
 }
@@ -417,11 +398,10 @@ static int sun4i_usb_phy_xlate(struct phy *phy,
 int sun4i_usb_phy_vbus_detect(struct phy *phy)
 {
 	struct sun4i_usb_phy_data *data = dev_get_priv(phy->dev);
-	struct sun4i_usb_phy_plat *usb_phy = &data->usb_phy[phy->id];
 	int err = 1, retries = 3;
 
-	if (dm_gpio_is_valid(&usb_phy->gpio_vbus_det)) {
-		err = dm_gpio_get_value(&usb_phy->gpio_vbus_det);
+	if (dm_gpio_is_valid(&data->vbus_det_gpio)) {
+		err = dm_gpio_get_value(&data->vbus_det_gpio);
 		/*
 		 * Vbus may have been provided by the board and just turned off
 		 * some milliseconds ago on reset. What we're measuring then is
@@ -429,7 +409,7 @@ int sun4i_usb_phy_vbus_detect(struct phy *phy)
 		 */
 		while (err > 0 && retries--) {
 			mdelay(100);
-			err = dm_gpio_get_value(&usb_phy->gpio_vbus_det);
+			err = dm_gpio_get_value(&data->vbus_det_gpio);
 		}
 	} else if (data->vbus_power_supply) {
 		err = regulator_get_enable(data->vbus_power_supply);
@@ -441,12 +421,11 @@ int sun4i_usb_phy_vbus_detect(struct phy *phy)
 int sun4i_usb_phy_id_detect(struct phy *phy)
 {
 	struct sun4i_usb_phy_data *data = dev_get_priv(phy->dev);
-	struct sun4i_usb_phy_plat *usb_phy = &data->usb_phy[phy->id];
 
-	if (!dm_gpio_is_valid(&usb_phy->gpio_id_det))
-		return -1;
+	if (!dm_gpio_is_valid(&data->id_det_gpio))
+		return -EOPNOTSUPP;
 
-	return dm_gpio_get_value(&usb_phy->gpio_id_det);
+	return dm_gpio_get_value(&data->id_det_gpio);
 }
 
 void sun4i_usb_phy_set_squelch_detect(struct phy *phy, bool enabled)
@@ -476,53 +455,28 @@ static int sun4i_usb_phy_probe(struct udevice *dev)
 	if (!data->base)
 		return -EINVAL;
 
+	gpio_request_by_name(dev, "usb0_id_det-gpios", 0, &data->id_det_gpio,
+			     GPIOD_IS_IN | GPIOD_PULL_UP);
+
+	gpio_request_by_name(dev, "usb0_vbus_det-gpios", 0, &data->vbus_det_gpio,
+			     GPIOD_IS_IN);
+
 	device_get_supply_regulator(dev, "usb0_vbus_power-supply",
 				    &data->vbus_power_supply);
 
 	data->usb_phy = plat;
 	for (i = 0; i < data->cfg->num_phys; i++) {
 		struct sun4i_usb_phy_plat *phy = &plat[i];
-		struct sun4i_usb_phy_info *info = &phy_info[i];
-		char name[16];
+		char name[32];
 
 		if (data->cfg->missing_phys & BIT(i))
 			continue;
 
-		ret = dm_gpio_lookup_name(info->gpio_vbus, &phy->gpio_vbus);
-		if (ret == 0) {
-			ret = dm_gpio_request(&phy->gpio_vbus, "usb_vbus");
-			if (ret)
-				return ret;
-			ret = dm_gpio_set_dir_flags(&phy->gpio_vbus,
-						    GPIOD_IS_OUT);
-			if (ret)
-				return ret;
-			ret = dm_gpio_set_value(&phy->gpio_vbus, 0);
-			if (ret)
-				return ret;
-		}
-
-		ret = dm_gpio_lookup_name(info->gpio_vbus_det,
-					  &phy->gpio_vbus_det);
-		if (ret == 0) {
-			ret = dm_gpio_request(&phy->gpio_vbus_det,
-					      "usb_vbus_det");
-			if (ret)
-				return ret;
-			ret = dm_gpio_set_dir_flags(&phy->gpio_vbus_det,
-						    GPIOD_IS_IN);
-			if (ret)
-				return ret;
-		}
-
-		ret = dm_gpio_lookup_name(info->gpio_id_det, &phy->gpio_id_det);
-		if (ret == 0) {
-			ret = dm_gpio_request(&phy->gpio_id_det, "usb_id_det");
-			if (ret)
-				return ret;
-			ret = dm_gpio_set_dir_flags(&phy->gpio_id_det,
-						GPIOD_IS_IN | GPIOD_PULL_UP);
-			if (ret)
+		snprintf(name, sizeof(name), "usb%d_vbus-supply", i);
+		ret = device_get_supply_regulator(dev, name, &phy->vbus);
+		if (phy->vbus) {
+			ret = regulator_set_enable(phy->vbus, false);
+			if (ret && ret != -ENOSYS)
 				return ret;
 		}
 
