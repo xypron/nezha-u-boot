@@ -111,7 +111,7 @@ config SPL_PAD_TO
 config SPL_HAS_BSS_LINKER_SECTION
 	depends on SPL_FRAMEWORK
 	bool "Use a specific address for the BSS via the linker script"
-	default y if ARCH_SUNXI || ARCH_MX6 || ARCH_OMAP2PLUS || MIPS || RISCV || ARCH_ZYNQMP
+	default y if ARCH_MX6 || ARCH_OMAP2PLUS || ARCH_ZYNQMP || BOARD_SUNXI || MIPS || RISCV
 
 config SPL_BSS_START_ADDR
 	hex "Link address for the BSS within the SPL binary"
@@ -119,9 +119,6 @@ config SPL_BSS_START_ADDR
 	default 0x88200000 if (ARCH_MX6 && (MX6SX || MX6SL || MX6UL || MX6ULL)) || ARCH_MX7
 	default 0x18200000 if ARCH_MX6 && !(MX6SX || MX6SL || MX6UL || MX6ULL)
 	default 0x80a00000 if ARCH_OMAP2PLUS
-	default 0x81f80000 if ARCH_SUNXI && MACH_SUNIV
-	default 0x4ff80000 if ARCH_SUNXI && !(MACH_SUN9I || MACH_SUNIV)
-	default 0x2ff80000 if ARCH_SUNXI && MACH_SUN9I
 	default 0x1000 if ARCH_ZYNQMP
 
 choice
@@ -264,9 +261,6 @@ config SPL_TEXT_BASE
 	default 0x402F4000 if AM43XX
 	default 0x402F0400 if AM33XX
 	default 0x40301350 if OMAP54XX
-	default 0x10060 if MACH_SUN50I || MACH_SUN50I_H5 || MACH_SUN9I
-	default 0x20060 if SUN50I_GEN_H6 || SUNXI_GEN_NCAT2
-	default 0x00060 if ARCH_SUNXI
 	default 0xfffc0000 if ARCH_ZYNQMP
 	default 0x0
 	help
@@ -355,7 +349,7 @@ config SPL_SYS_MALLOC_SIMPLE
 config SPL_SHARES_INIT_SP_ADDR
 	bool "SPL and U-Boot use the same initial stack pointer location"
 	depends on (ARM || ARCH_JZ47XX || MICROBLAZE || RISCV) && SPL_FRAMEWORK
-	default n if ARCH_SUNXI || ARCH_MX6 || ARCH_MX7
+	default n if BOARD_SUNXI || ARCH_MX6 || ARCH_MX7
 	default y
 	help
 	  In many cases, we can use the same initial stack pointer address for
@@ -475,7 +469,7 @@ config SPL_DISPLAY_PRINT
 
 config SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
 	bool "MMC raw mode: by sector"
-	default y if ARCH_SUNXI || ARCH_DAVINCI || ARCH_UNIPHIER || \
+	default y if BOARD_SUNXI || ARCH_DAVINCI || ARCH_UNIPHIER || \
 		     ARCH_MX6 || ARCH_MX7 || \
 		     ARCH_ROCKCHIP || ARCH_MVEBU ||  ARCH_SOCFPGA || \
 		     ARCH_AT91 || ARCH_ZYNQ || ARCH_KEYSTONE || OMAP34XX || \
@@ -488,7 +482,7 @@ config SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
 config SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR
 	hex "Address on the MMC to load U-Boot from"
 	depends on SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
-	default 0x40 if ARCH_SUNXI
+	default 0x40 if BOARD_SUNXI
 	default 0x75 if ARCH_DAVINCI
 	default 0x8a if ARCH_MX6 || ARCH_MX7
 	default 0x100 if ARCH_UNIPHIER
@@ -505,7 +499,7 @@ config SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR
 config SYS_MMCSD_RAW_MODE_U_BOOT_DATA_PART_OFFSET
 	hex "U-Boot main hardware partition image offset"
 	depends on SYS_MMCSD_RAW_MODE_U_BOOT_USE_SECTOR
-	default 0x10 if ARCH_SUNXI
+	default 0x10 if BOARD_SUNXI
 	default 0x0
 	help
 	  On some platforms SPL location depends on hardware partition. The ROM
@@ -1350,7 +1344,7 @@ endif # SPL_SPI_FLASH_SUPPORT
 
 config SYS_SPI_U_BOOT_OFFS
 	hex "address of u-boot payload in SPI flash"
-	default 0x8000 if ARCH_SUNXI
+	default 0x8000 if BOARD_SUNXI
 	default 0x0
 	depends on SPL_SPI_LOAD || SPL_SPI_SUNXI
 	help

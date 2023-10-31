@@ -488,7 +488,7 @@ config SPI_SN_F_OSPI
 
 config SPI_SUNXI
 	bool "Allwinner SoC SPI controllers"
-	default ARCH_SUNXI
+	default BOARD_SUNXI
 	help
 	  Enable the Allwinner SoC SPi controller driver.
 
