@@ -185,14 +185,6 @@ config SUN50I_GEN_H6
 	Select this for sunxi SoCs which have H6 like peripherals, clocks
 	and memory map.
 
-config SUNXI_GEN_NCAT2
-	bool
-	select MMC_SUNXI_HAS_NEW_MODE
-	select SUPPORT_SPL
-	---help---
-	Select this for sunxi SoCs which have D1 like peripherals, clocks
-	and memory map.
-
 config SUNXI_DRAM_DW
 	bool
 	---help---
